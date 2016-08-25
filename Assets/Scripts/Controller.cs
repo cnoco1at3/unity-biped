@@ -8,24 +8,28 @@ public class Controller : MonoBehaviour {
     public GameObject[] arm_l, arm_r;
     public GameObject[] body;
 
-    private Configuration config;
-    private MotionGenerator mogen;
-    private Vector3 giz_dir;
+    private Configuration _config;
+    private MotionGenerator _motion_gen;
+    private Vector3 _giz_dir;
 
     void Start () {
-        config = new Configuration(root, leg_l, leg_r, arm_l, arm_r, body);
-        mogen = new MotionGenerator(config);
+        _config = new Configuration(root, leg_l, leg_r, arm_l, arm_r, body);
+        _motion_gen = new MotionGenerator(_config);
+
+        _config.root.gameObject.AddComponent<RigInteractor>();
 
         // initialize motor constraint
-        foreach (DictionaryEntry jnt_entry in config.jnt_configs) {
+        foreach (DictionaryEntry jnt_entry in _config.jnt_configs) {
             JointConfig jnt_config = (JointConfig)jnt_entry.Value;
             ConfigurableJoint jnt = (ConfigurableJoint)jnt_config.joint;
             JointDrive jntdrv = new JointDrive();
 
-            jntdrv.positionSpring = Configuration.k_p *
+            jnt.gameObject.AddComponent<RigInteractor>();
+
+            jntdrv.positionSpring = Configuration.kP *
                 jnt.gameObject.GetComponent<Rigidbody>().mass *
                 (jnt.GetComponentsInChildren<Rigidbody>().Length);
-            jntdrv.positionDamper = Configuration.k_d *
+            jntdrv.positionDamper = Configuration.kD *
                 Mathf.Sqrt(jntdrv.positionSpring);
             jntdrv.maximumForce = Mathf.Infinity;
 
@@ -37,32 +41,32 @@ public class Controller : MonoBehaviour {
     /* wasd control */
     void Update () {
         if (Input.GetKey(KeyCode.W)) {
-            config.k_dv = config.k_voff + new Vector3(0.0f, 0.0f, 0.7f);
-            giz_dir = new Vector3(0f, 0f, 1f);
+            _config.kDV = _config.kVOff + new Vector3(0.0f, 0.0f, 0.7f);
+            _giz_dir = new Vector3(0f, 0f, 1f);
         }
         else if (Input.GetKey(KeyCode.A)) {
-            config.k_dv = config.k_voff + new Vector3(-0.7f, 0.0f, 0.0f);
-            giz_dir = new Vector3(-1f, 0f, 0f);
+            _config.kDV = _config.kVOff + new Vector3(-0.7f, 0.0f, 0.0f);
+            _giz_dir = new Vector3(-1f, 0f, 0f);
         }
         else if (Input.GetKey(KeyCode.S)) {
-            config.k_dv = config.k_voff + new Vector3(0.0f, 0.0f, -0.3f);
-            giz_dir = new Vector3(0f, 0f, -1f);
+            _config.kDV = _config.kVOff + new Vector3(0.0f, 0.0f, -0.3f);
+            _giz_dir = new Vector3(0f, 0f, -1f);
         }
         else if (Input.GetKey(KeyCode.D)) {
-            config.k_dv = config.k_voff + new Vector3(0.7f, 0.0f, 0.0f);
-            giz_dir = new Vector3(1f, 0f, 0f);
+            _config.kDV = _config.kVOff + new Vector3(0.7f, 0.0f, 0.0f);
+            _giz_dir = new Vector3(1f, 0f, 0f);
         }
         else {
-            config.k_dv = config.k_voff;
-            giz_dir = new Vector3(0f, 0f, 0f);
+            _config.kDV = _config.kVOff;
+            _giz_dir = new Vector3(0f, 0f, 0f);
         }
     }
 
     void FixedUpdate () {
-        mogen.GeneratePose();
+        _motion_gen.GeneratePose();
 
         // set motor constraint
-        foreach (DictionaryEntry jnt_entry in config.jnt_configs) {
+        foreach (DictionaryEntry jnt_entry in _config.jnt_configs) {
             JointConfig jnt_config = (JointConfig)jnt_entry.Value;
             Quaternion target = LocalToJoint(
                 (ConfigurableJoint)jnt_config.joint,
@@ -107,16 +111,16 @@ public class Controller : MonoBehaviour {
     void OnDrawGizmos () {
 
         Gizmos.color = Color.yellow;
-        foreach (Vector3 pos in mogen.Helper) {
+        foreach (Vector3 pos in _motion_gen.Helper) {
             Gizmos.DrawWireCube(pos, new Vector3(0.1f, 0.1f, 0.1f));
         }
 
         Gizmos.color = Color.blue;
-        foreach (Vector3 pos in mogen.Target) {
+        foreach (Vector3 pos in _motion_gen.Target) {
             Gizmos.DrawWireCube(pos, new Vector3(0.1f, 0.1f, 0.1f));
         }
 
         Gizmos.color = Color.green;
-        Gizmos.DrawCube(giz_dir, new Vector3(0.3f, 0.3f, 0.3f));
+        Gizmos.DrawCube(_giz_dir, new Vector3(0.3f, 0.3f, 0.3f));
     }
 }

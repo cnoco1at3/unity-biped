@@ -3,7 +3,7 @@ using System.Collections;
 
 public class PhaseManager {
 
-    public const float k_cycle = 0.8f;
+    public const float k_cycle = 0.6f;
     private static float[] param = { 0.0f, 0.5f, 0.5f, 1.0f };
 
     public static int GetCurrentPhase(float time) {

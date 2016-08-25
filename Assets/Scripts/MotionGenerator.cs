@@ -49,7 +49,7 @@ public class MotionGenerator {
         // swing foot 
         if (swing) {
             target = leg[0].transform.position + CalIPM();
-            target.y = Configuration.k_lift_h *
+            target.y = Configuration.kLiftH *
                 PhaseManager.InterpolateHeight(Time.time);
         }
 
@@ -67,8 +67,8 @@ public class MotionGenerator {
 
         /* second pass solve ik */
         target = leg[0].transform.position;
-        target.y = config.k_dh;
-        target += config.k_dv * Time.fixedDeltaTime;
+        target.y = config.kDH;
+        target += config.kDV * Time.fixedDeltaTime;
         pos = ik_solver.LimitedSolveIK(pos, target,
             config.root.transform.forward, true);
 
@@ -127,7 +127,7 @@ public class MotionGenerator {
         if (g == 0) g = 0.1f;
 
         d *= Mathf.Sqrt(com.y / g + Vector3.SqrMagnitude(d) / (4 * g * g));
-        d = Vector3.Magnitude(d) * new Vector3(d.x, 0, d.z).normalized - Configuration.k_v_alpha * config.k_dv;
+        d = Vector3.Magnitude(d) * new Vector3(d.x, 0, d.z).normalized - Configuration.kVAlpha * config.kDV;
         d.y = 0;
 
         return d;

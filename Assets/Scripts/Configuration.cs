@@ -20,16 +20,16 @@ public class Configuration {
 
     /* parameters */
 
-    public Vector3 k_dv; // desired velocity
-    public Vector3 k_voff; // velocity offset
-    public float k_dh = 0.63f; // desired height
+    public Vector3 kDV; // desired velocity
+    public Vector3 kVOff; // velocity offset
+    public float kDH = 0.62f; // desired height
     // PD control
-    public const float k_p = 300f, // P for PD controller
-        k_d = 2.0f; // D for PD controller
+    public const float kP = 400f, // P for PD controller
+        kD = 2.0f; // D for PD controller
     // velocity tuning
-    public const float k_v = 0.05f,
-        k_v_alpha = 0.05f,
-        k_lift_h = 0.12f; // foot lift height
+    public const float kV = 0.05f,
+        kVAlpha = 0.05f,
+        kLiftH = 0.12f; // foot lift height
 
     /* joints */
     public Hashtable jnt_configs;
@@ -53,8 +53,8 @@ public class Configuration {
 
         // initialize parameters
 
-        k_voff = new Vector3(0.0f, 0.0f, -1.3f);
-        k_dv = k_voff;
+        kVOff = new Vector3(0.0f, 0.0f, -1f);
+        kDV = kVOff;
         Length = 0;
 
         // initialize joints lists
