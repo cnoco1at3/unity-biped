@@ -2,7 +2,6 @@
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
-using System.Collections.Generic;
 
 namespace Leap.Unity.Attributes {
 
@@ -19,13 +18,8 @@ namespace Leap.Unity.Attributes {
         property.floatValue = Mathf.Max(minValue, property.floatValue);
       } else if (property.propertyType == SerializedPropertyType.Integer) {
         property.intValue = Mathf.Max((int)minValue, property.intValue);
-      }
-    }
-
-    public override IEnumerable<SerializedPropertyType> SupportedTypes {
-      get {
-        yield return SerializedPropertyType.Integer;
-        yield return SerializedPropertyType.Float;
+      } else {
+        Debug.LogWarning("Should not use MinValue for fields that are not float or int!");
       }
     }
 #endif

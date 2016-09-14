@@ -3,7 +3,6 @@ using UnityEngine.VR;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Leap.Unity.Attributes;
 
 namespace Leap.Unity {
   /// <summary>
@@ -46,7 +45,6 @@ namespace Leap.Unity {
       }
     }
 
-    [AutoFind]
     [SerializeField]
     private LeapServiceProvider provider;
 

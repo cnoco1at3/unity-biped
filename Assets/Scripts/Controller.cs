@@ -111,6 +111,8 @@ public class Controller : MonoBehaviour {
     void OnDrawGizmos () {
 
         Gizmos.color = Color.yellow;
+		// this is throwing up nullreference exceptions
+		/*
         foreach (Vector3 pos in _motion_gen.Helper) {
             Gizmos.DrawWireCube(pos, new Vector3(0.1f, 0.1f, 0.1f));
         }
@@ -119,6 +121,7 @@ public class Controller : MonoBehaviour {
         foreach (Vector3 pos in _motion_gen.Target) {
             Gizmos.DrawWireCube(pos, new Vector3(0.1f, 0.1f, 0.1f));
         }
+		        */
 
         Gizmos.color = Color.green;
         Gizmos.DrawCube(_giz_dir, new Vector3(0.3f, 0.3f, 0.3f));

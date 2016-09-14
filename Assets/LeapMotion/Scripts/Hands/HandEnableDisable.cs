@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections;
-using System;
 using Leap;
 
 namespace Leap.Unity{
@@ -12,11 +11,11 @@ namespace Leap.Unity{
 
   	protected override void HandReset() {
       gameObject.SetActive(true);
-    }
-
-    protected override void HandFinish() {
-      gameObject.SetActive(false);
-    }
-
+  	}
+  
+  	protected override void HandFinish () {
+  		gameObject.SetActive(false);
+  	}
+  	
   }
 }

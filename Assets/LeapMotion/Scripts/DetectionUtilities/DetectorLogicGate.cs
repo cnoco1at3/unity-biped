@@ -105,10 +105,6 @@ namespace Leap.Unity {
       detector.OnDeactivate.AddListener(CheckDetectors);
     }
 
-    private void OnEnable() {
-      CheckDetectors();
-    }
-
     private void OnDisable () {
       Deactivate();
     }

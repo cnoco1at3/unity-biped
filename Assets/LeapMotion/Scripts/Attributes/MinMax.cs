@@ -2,7 +2,6 @@
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
-using System.Collections.Generic;
 
 namespace Leap.Unity.Attributes {
 
@@ -28,6 +27,12 @@ namespace Leap.Unity.Attributes {
 #if UNITY_EDITOR
     public void DrawProperty(Rect rect, SerializedProperty property, GUIContent label) {
       EditorGUI.BeginProperty(rect, label, property);
+
+      if (property.propertyType != SerializedPropertyType.Vector2) {
+        EditorGUI.PropertyField(rect, property);
+        Debug.LogWarning("The MinMax property can only be used on Vector2!");
+        return;
+      }
 
       Vector2 value = property.vector2Value;
 
@@ -55,12 +60,6 @@ namespace Leap.Unity.Attributes {
       EditorGUI.EndProperty();
 
       EditorGUI.indentLevel = prevIndent;
-    }
-
-    public override IEnumerable<SerializedPropertyType> SupportedTypes {
-      get {
-        yield return SerializedPropertyType.Vector2;
-      }
     }
 #endif
   }

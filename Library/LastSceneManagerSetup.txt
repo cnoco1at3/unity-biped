@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Scenes/MainScene.unity
+- path: C:/Users/Ralph/Documents/GitHub/social-vr/Assets/Scenes/Menu.unity
   isLoaded: 1
   isActive: 1
