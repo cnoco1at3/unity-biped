@@ -32,9 +32,13 @@ public class MotionGenerator {
         // get the current phase
         int phase = PhaseManager.GetCurrentPhase(Time.time);
 
-        // generate leg pose
+        /* generate leg pose
         GenLegPose(config.leg_l, phase == 0);
         GenLegPose(config.leg_r, phase != 0);
+        */
+
+        GenLegPose(config.leg_l, false);
+        GenLegPose(config.leg_r, false);
     }
 
     /*!
