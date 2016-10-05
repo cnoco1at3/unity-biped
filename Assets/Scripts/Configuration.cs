@@ -18,14 +18,14 @@ struct JointConfig {
 
 public class Configuration {
 
-    /* parameters */
+    /* global parameters */
 
     public Vector3 kDV; // desired velocity
     public Vector3 kVOff; // velocity offset
     public float kDH = 0.62f; // desired height
     // PD control
-    public const float kP = 400f, // P for PD controller
-        kD = 2.0f; // D for PD controller
+    public const float kP = 40000f, // P for PD controller
+        kD = 400f; // D for PD controller
     // velocity tuning
     public const float kV = 0.05f,
         kVAlpha = 0.05f,

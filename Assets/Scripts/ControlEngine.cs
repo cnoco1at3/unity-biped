@@ -2,19 +2,19 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Controller : MonoBehaviour {
+public class ControlEngine : MonoBehaviour {
     public GameObject root;
     public GameObject[] leg_l, leg_r;
     public GameObject[] arm_l, arm_r;
     public GameObject[] body;
 
     private Configuration _config;
-    private MotionGenerator _motion_gen;
+    private MotionGenerator _motion_generator;
     private Vector3 _giz_dir;
 
     void Start () {
         _config = new Configuration(root, leg_l, leg_r, arm_l, arm_r, body);
-        _motion_gen = new MotionGenerator(_config);
+        _motion_generator = new MotionGenerator(_config);
 
         _config.root.gameObject.AddComponent<RigInteractor>();
 
@@ -63,12 +63,12 @@ public class Controller : MonoBehaviour {
     }
 
     void FixedUpdate () {
-        _motion_gen.GeneratePose();
+        _motion_generator.GeneratePose();
 
         // set motor constraint
         foreach (DictionaryEntry jnt_entry in _config.jnt_configs) {
             JointConfig jnt_config = (JointConfig)jnt_entry.Value;
-            Quaternion target = LocalToJoint(
+            Quaternion target = MathHelper.LocalToJoint(
                 (ConfigurableJoint)jnt_config.joint,
                 jnt_config.init_rot,
                 jnt_config.tar_rot);
@@ -76,54 +76,22 @@ public class Controller : MonoBehaviour {
         }
     }
 
-    // covert local space rotation to joint space
-    Quaternion LocalToJoint (ConfigurableJoint jnt,
-        Quaternion init,
-        Quaternion tar) {
-        Vector3 right = jnt.axis;
-        Vector3 forward = Vector3.Cross(jnt.axis, jnt.secondaryAxis).normalized;
-        Vector3 up = Vector3.Cross(forward, right).normalized;
-
-        Quaternion w2j = Quaternion.LookRotation(forward, up);
-
-        Quaternion res = Quaternion.Inverse(w2j);
-        res *= Quaternion.Inverse(tar) * init;
-        res *= w2j;
-        return res;
-    }
-
-    // convert world space rotation to joint space
-    Quaternion WorldToJoint (ConfigurableJoint jnt,
-        Quaternion init,
-        Quaternion tar) {
-        Vector3 right = jnt.axis;
-        Vector3 forward = Vector3.Cross(jnt.axis, jnt.secondaryAxis).normalized;
-        Vector3 up = Vector3.Cross(forward, right).normalized;
-
-        Quaternion w2j = Quaternion.LookRotation(forward, up);
-
-        Quaternion res = Quaternion.Inverse(w2j);
-        res *= init * Quaternion.Inverse(tar);
-        res *= w2j;
-        return res;
-    }
-
     void OnDrawGizmos () {
 
         Gizmos.color = Color.yellow;
-		// this is throwing up nullreference exceptions
-		/*
-        foreach (Vector3 pos in _motion_gen.Helper) {
+        // this is throwing up nullreference exceptions
+        foreach (Vector3 pos in _motion_generator.helper_gizmos) {
             Gizmos.DrawWireCube(pos, new Vector3(0.1f, 0.1f, 0.1f));
         }
 
         Gizmos.color = Color.blue;
-        foreach (Vector3 pos in _motion_gen.Target) {
+        foreach (Vector3 pos in _motion_generator.target_gizmos) {
             Gizmos.DrawWireCube(pos, new Vector3(0.1f, 0.1f, 0.1f));
         }
-		        */
 
+        /*
         Gizmos.color = Color.green;
         Gizmos.DrawCube(_giz_dir, new Vector3(0.3f, 0.3f, 0.3f));
+        */
     }
 }

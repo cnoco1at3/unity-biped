@@ -1,6 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+enum footmode {
+    swing,
+    stance
+};
+
 public class PhaseManager {
 
     public const float k_cycle = 0.6f;
