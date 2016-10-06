@@ -21,7 +21,7 @@ public static class FABRIKSolver {
      * space as input, direction as constraint vector. When inverse is true,
      * last joint in the list would be the root.
      */
-    public static Vector3[] SolveIKWithVectorConstraint (ref Vector3[] position,
+    public static void SolveIKWithVectorConstraint (ref Vector3[] position,
         Vector3 target,
         Vector3 direction,
         bool inverse = false) {
@@ -94,8 +94,5 @@ public static class FABRIKSolver {
                 Extension.Swap<Vector3>(ref position[i], ref position[position.Length - i - 1]);
             }
         }
-
-        return position;
     }
-
 }

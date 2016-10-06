@@ -9,7 +9,7 @@ public enum AnimMode {
 public class CharaController{
 
     private CharaConfiguration _chara;
-
+    private Configuration _config;
 
     // Generate a target trajectory position in world coordinate
     public virtual void GenerateJointPositionTrajectory () {

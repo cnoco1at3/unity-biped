@@ -10,6 +10,8 @@ public class LimbsController : CharaController {
     private GameObject[] _limbs;
     private ConfigurableJoint[] _joints;
     private Rigidbody[] _rigs;
+    private Quaternion[] _init_rot;
+    private Quaternion[] _target_rot;
 
     // IK parameters
     private Vector3 _ik_target;
@@ -27,6 +29,18 @@ public class LimbsController : CharaController {
         _config = config;
         _limbs = limbs;
         _debug = debug;
+
+        _joints = new ConfigurableJoint[_limbs.Length];
+        _rigs = new Rigidbody[_limbs.Length];
+        _init_rot = new Quaternion[_limbs.Length];
+        _target_rot = new Quaternion[_limbs.Length];
+        for(int i = 0; i < _limbs.Length; ++i) {
+            _joints[i] = _limbs[i].GetComponent<ConfigurableJoint>();
+            _rigs[i] = _limbs[i].GetComponent<Rigidbody>();
+
+            _init_rot[i] = _limbs[i].transform.rotation;
+            _target_rot[i] = _init_rot[i];
+        }
 
         _ik_position = new Vector3[_limbs.Length];
     }
@@ -56,8 +70,34 @@ public class LimbsController : CharaController {
     }
 
     public override void GenerateJointRotation () {
+
         for(int i = 0; i < _limbs.Length; ++i) {
 
+            // Foot joint
+            if(i == _limbs.Length - 1) {
+                _target_rot[i] = Quaternion.Inverse(_joints[i].connectedBody.transform.rotation);
+                continue;
+            }
+
+            // Calculate local axis
+            Vector3 x = (_ik_position[i + 1] - _ik_position[i]).normalized;
+            Vector3 y = Vector3.Cross(x, _config.root.transform.forward).normalized;
+            if (Vector3.Dot(y, _config.root.transform.up) > 0)
+                y = -y;
+            Vector3 z = Vector3.Cross(y, x);
+
+            if (GetCurrentMode() != AnimMode.kSwing && i == 0) {
+                _target_rot[i] =
+                    Quaternion.Inverse(_joints[i].connectedBody.transform.rotation) *
+                    Quaternion.FromToRotation(-Vector3.up, _config.root.transform.right) *
+                    Quaternion.LookRotation(z, y);
+            }
+
+            // other joints
+            else {
+                _target_rot[i] = Quaternion.Inverse(_joints[i].connectedBody.transform.rotation) *
+                    Quaternion.LookRotation(z, y);
+            }
         }
     }
 

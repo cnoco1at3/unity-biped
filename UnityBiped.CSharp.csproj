@@ -176,8 +176,8 @@
     <Compile Include="Assets\Scripts\ControlLib\LimbsController.cs" />
     <Compile Include="Assets\Scripts\ControlLib\MotionGenerator.cs" />
     <Compile Include="Assets\Scripts\Extension\Extension.cs" />
+    <Compile Include="Assets\Scripts\Extension\FABRIKSolver.cs" />
     <Compile Include="Assets\Scripts\Extension\MathHelper.cs" />
-    <Compile Include="Assets\Scripts\FABRIKSolver.cs" />
     <Compile Include="Assets\Scripts\PhaseManager.cs" />
     <Compile Include="Assets\Scripts\RigInteractor.cs" />
     <Compile Include="Assets\SphereForce.cs" />
