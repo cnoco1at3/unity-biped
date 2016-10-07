@@ -12,18 +12,22 @@ public class Configuration {
     /* global parameters */
 
     public Vector3 kDV; // desired velocity
-    public Vector3 kVOff; // velocity offset
     public float kDH = 0.62f; // desired height
     // PD control
-    public float kP = 40000f, // P for PD controller
-        kD = 400f; // D for PD controller
+    public float kP = 200f, // P for PD controller
+        kD; // D for PD controller
     // velocity tuning
     public float kV = 0.05f,
         kVAlpha = 0.05f,
-        kLiftH = 0.12f; // foot lift height
+        kLiftH = 0.20f; // foot lift height
+
+    public List<Vector3> gizmos;
+    public List<Color> gizcolor;
 
     public Configuration () {
-        kVOff = new Vector3(0.0f, 0.0f, -1f);
-        kDV = kVOff;
+        kDV = Vector3.zero;
+        kD = 2 * Mathf.Sqrt(kP);
+        gizmos = new List<Vector3>();
+        gizcolor = new List<Color>();
     }
 }

@@ -4,22 +4,32 @@ public class LimbsController : CharaController {
 
     // IK parameters
     private Vector3 _ik_target;
+    private static int ctrl_count = 0;
+    private int ctrl_id;
 
     // Constructor
-    public LimbsController (CharaConfiguration chara, Configuration config, GameObject[] objs, bool debug = false) 
+    public LimbsController (CharaConfiguration chara, Configuration config, GameObject[] objs, bool debug = false)
         : base(chara, config, objs, debug) {
-
+        ctrl_id = ctrl_count++;
     }
 
     public override void GenerateJointPositionTrajectory () {
+        AnimMode mode = GetCurrentMode();
 
         // Assign IK target for swing or stance foot
-        if (GetCurrentMode() == AnimMode.kSwing) {
-            _ik_target = _objs[0].transform.position + IPMError();
-            _ik_target.y = _config.kLiftH * PhaseManager.InterpolateHeight(Time.time);
+        if (mode == AnimMode.kSwing) {
+            _ik_target = _objs[0].transform.position + IPMError() + FootError(_objs.Length - 1);
+            _ik_target.y = _config.kLiftH * PhaseManager.InterpolateHeight(Time.time, ctrl_id);
+            if (_debug) {
+                // _config.gizmos.Add(_ik_target);
+                _config.gizmos.Add(_ik_target);
+                _config.gizcolor.Add(Color.blue);
+                _config.gizmos.Add(_objs[0].transform.position);
+                _config.gizcolor.Add(Color.red);
+            }
         }
         else {
-            _ik_target = _objs[0].transform.position;
+            _ik_target = _objs[0].transform.position + FootError(_objs.Length - 1);
             _ik_target.y = 0;
         }
 
@@ -29,20 +39,34 @@ public class LimbsController : CharaController {
         FABRIKSolver.SolveIKWithVectorConstraint(ref _target_pos, _ik_target, _chara.root.transform.forward);
 
         // 2nd pass IK solving
+        // if (GetCurrentMode() == AnimMode.kSwing)
         _ik_target = _objs[0].transform.position;
+        /*else
+            _ik_target = _objs[_objs.Length - 1].transform.localToWorldMatrix.MultiplyPoint(_rigs[_objs.Length - 1].centerOfMass);
+            */
         _ik_target.y = _config.kDH;
         _ik_target += _config.kDV * Time.fixedDeltaTime;
         FABRIKSolver.SolveIKWithVectorConstraint(ref _target_pos, _ik_target, _chara.root.transform.forward, true);
+
+        if (_debug) {
+            foreach (Vector3 target in _target_pos) {
+                _config.gizmos.Add(target);
+                _config.gizcolor.Add(Color.yellow);
+            }
+        }
     }
 
     public override void GenerateJointRotation () {
 
-        for(int i = 0; i < _objs.Length; ++i) {
+        AnimMode mode = GetCurrentMode();
+
+        for (int i = 0; i < _objs.Length; ++i) {
 
             // Foot joint
-            if(i == _objs.Length - 1) {
-                _target_rot[i] = Quaternion.Inverse(_joints[i].connectedBody.transform.rotation);
-                continue;
+            if (i == _objs.Length - 1) {
+                _target_rot[i] = Quaternion.Inverse(_joints[i].connectedBody.transform.rotation) *
+                    Quaternion.LookRotation(Vector3.up, _joints[i].connectedBody.transform.up);
+                break;
             }
 
             // Calculate local axis
@@ -50,38 +74,51 @@ public class LimbsController : CharaController {
             Vector3 y = Vector3.Cross(x, _chara.root.transform.forward).normalized;
             if (Vector3.Dot(y, _chara.root.transform.up) > 0)
                 y = -y;
-            Vector3 z = Vector3.Cross(y, x);
+            if (y == Vector3.zero)
+                y = -_chara.root.transform.up;
+            Vector3 z = Vector3.Cross(y, x).normalized;
 
-            if (GetCurrentMode() != AnimMode.kSwing && i == 0) {
-                _target_rot[i] =
-                    Quaternion.Inverse(_joints[i].connectedBody.transform.rotation) *
-                    Quaternion.FromToRotation(-Vector3.up, _chara.root.transform.right) *
-                    Quaternion.LookRotation(z, y);
+            // Stance foot balance
+            Quaternion local = Quaternion.Inverse(_joints[i].connectedBody.transform.rotation);
+            Quaternion joint = Quaternion.LookRotation(z, y);
+            if (mode != AnimMode.kSwing && i == 0) {
+                _target_rot[i] = local * joint;
+
+                Vector3 root_err = Quaternion.FromToRotation(_chara.root.transform.right, -Vector3.up).eulerAngles.Shift2Pi();
+                _target_rot[i] *= Quaternion.Euler(new Vector3(0, root_err[0], -root_err[2]));
             }
-
             // other joints
             else {
-                _target_rot[i] = Quaternion.Inverse(_joints[i].connectedBody.transform.rotation) *
-                    Quaternion.LookRotation(z, y);
+                _target_rot[i] = local * joint;
             }
         }
     }
 
+    public override void ApplyJointRotation () {
+        base.ApplyJointRotation();
+    }
+
     public override AnimMode GetCurrentMode () {
-        return AnimMode.kStance;
+         return AnimMode.kStance;
+        //return PhaseManager.GetCurrentPhase(Time.time, ctrl_id);
     }
 
     private Vector3 IPMError () {
         Vector3 d = _chara.root.velocity;
-        Vector3 com = (Vector3)(_chara.root.transform.localToWorldMatrix * _chara.GetCenterOfMass()) + _chara.root.transform.position;
+        Vector3 com = _chara.GetCenterOfMass();
 
         float g = Mathf.Abs(Physics.gravity.y);
-        if (g == 0) g = 0.1f;
 
+        d.y = 0;
         d *= Mathf.Sqrt(com.y / g + Vector3.SqrMagnitude(d) / (4 * g * g));
-        d = Vector3.Magnitude(d) * new Vector3(d.x, 0, d.z).normalized - _config.kVAlpha * _config.kDV;
+        d -= _config.kVAlpha * _config.kDV;
         d.y = 0;
 
         return d;
+    }
+
+    private Vector3 FootError (int index) {
+        Vector3 com_in_world = _objs[index].transform.localToWorldMatrix.MultiplyPoint(_rigs[index].centerOfMass);
+        return _objs[index].transform.position - com_in_world;
     }
 }

@@ -14,7 +14,6 @@ public class ControlEngine : MonoBehaviour {
     private MotionGenerator _motion_generator;
 
     // Print debug info
-    private bool _debug = false;
 
     void Start () {
         // Configuration
@@ -31,15 +30,23 @@ public class ControlEngine : MonoBehaviour {
         _motion_generator = new MotionGenerator(_chara, _config, debug);
 
         root.AddComponent<RigInteractor>();
+        /*
+        if (debug)
+            root.GetComponent<Rigidbody>().isKinematic = true;
+            */
     }
 
     void Update () {
         /* wasd control */
-        if (_debug)
+        if (debug)
             KeyboardInteraction();
     }
 
     void FixedUpdate () {
+        if (debug) {
+            _config.gizmos.Clear();
+            _config.gizcolor.Clear();
+        }
         _motion_generator.GenerateTargetPose();
         _motion_generator.ApplyTargetPose();
 
@@ -47,32 +54,29 @@ public class ControlEngine : MonoBehaviour {
 
     void KeyboardInteraction () {
         if (Input.GetKey(KeyCode.W)) {
-            _config.kDV = _config.kVOff + new Vector3(0.0f, 0.0f, 0.7f);
+            _config.kDV = new Vector3(0.0f, 0.0f, 0.7f);
         }
         else if (Input.GetKey(KeyCode.A)) {
-            _config.kDV = _config.kVOff + new Vector3(-0.7f, 0.0f, 0.0f);
+            _config.kDV = new Vector3(-0.7f, 0.0f, 0.0f);
         }
         else if (Input.GetKey(KeyCode.S)) {
-            _config.kDV = _config.kVOff + new Vector3(0.0f, 0.0f, -0.3f);
+            _config.kDV = new Vector3(0.0f, 0.0f, -0.3f);
         }
         else if (Input.GetKey(KeyCode.D)) {
-            _config.kDV = _config.kVOff + new Vector3(0.7f, 0.0f, 0.0f);
+            _config.kDV = new Vector3(0.7f, 0.0f, 0.0f);
         }
         else {
-            _config.kDV = _config.kVOff;
+            _config.kDV = Vector3.zero;
         }
     }
 
 
     void OnDrawGizmos () {
-        if (_debug) {
-
-            Gizmos.color = Color.yellow;
-            // this is throwing up nullreference exceptions
-            /*
-            Gizmos.color = Color.green;
-            Gizmos.DrawCube(_giz_dir, new Vector3(0.3f, 0.3f, 0.3f));
-            */
+        if (debug) {
+            for (int i = 0; i < _config.gizcolor.Count; ++i) {
+                Gizmos.color = _config.gizcolor[i];
+                Gizmos.DrawWireCube(_config.gizmos[i], new Vector3(0.1f, 0.1f, 0.1f));
+            }
         }
     }
 }

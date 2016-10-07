@@ -179,8 +179,8 @@
     <Compile Include="Assets\Scripts\Extension\Extension.cs" />
     <Compile Include="Assets\Scripts\Extension\FABRIKSolver.cs" />
     <Compile Include="Assets\Scripts\Extension\MathHelper.cs" />
+    <Compile Include="Assets\Scripts\NewBehaviourScript.cs" />
     <Compile Include="Assets\Scripts\RigInteractor.cs" />
-    <Compile Include="Assets\SphereForce.cs" />
     <Compile Include="Assets\SteamVR\Extras\SteamVR_GazeTracker.cs" />
     <Compile Include="Assets\SteamVR\Extras\SteamVR_LaserPointer.cs" />
     <Compile Include="Assets\SteamVR\Extras\SteamVR_Teleporter.cs" />

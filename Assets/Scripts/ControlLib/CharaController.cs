@@ -6,13 +6,13 @@ public enum AnimMode {
     kStatic
 };
 
-public class CharaController{
+public class CharaController {
     protected CharaConfiguration _chara;
     protected Configuration _config;
 
     protected GameObject[] _objs;
     protected ConfigurableJoint[] _joints;
-    protected Rigidbody[] _rigs;
+    public Rigidbody[] _rigs;
     protected Quaternion[] _init_rot;
     protected Quaternion[] _target_rot;
     protected Vector3[] _target_pos;
@@ -20,6 +20,9 @@ public class CharaController{
     protected bool _debug;
 
     public CharaController (CharaConfiguration chara, Configuration config, GameObject[] objs, bool debug = false) {
+        _chara = chara;
+        _config = config;
+
         _objs = objs;
         _joints = new ConfigurableJoint[_objs.Length];
         _rigs = new Rigidbody[_objs.Length];
@@ -27,16 +30,19 @@ public class CharaController{
         _target_rot = new Quaternion[_objs.Length];
         _target_pos = new Vector3[_objs.Length];
 
+        _debug = debug;
+
         for (int i = 0; i < _objs.Length; ++i) {
             _rigs[i] = _objs[i].GetComponent<Rigidbody>();
-            _init_rot[i] = _objs[i].transform.rotation;
+            /*
+            if (_debug)
+                _rigs[i].isKinematic = true;
+                */
+            _init_rot[i] = _objs[i].transform.localRotation;
             _target_rot[i] = _init_rot[i];
 
             _joints[i] = _objs[i].GetComponent<ConfigurableJoint>();
         }
-
-        if (_debug)
-            Debug.Log("CharaController Constructor");
 
         InitializeJoints();
     }
@@ -57,6 +63,11 @@ public class CharaController{
                 _target_rot[i]
                 );
             _joints[i].targetRotation = target_joint_rot;
+            /*
+            if (_debug) {
+                _objs[i].transform.localRotation = _target_rot[i];
+            }
+            */
         }
     }
 
