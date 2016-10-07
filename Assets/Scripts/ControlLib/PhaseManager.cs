@@ -18,7 +18,7 @@ public class PhaseManager {
     public static float Interpolate (float time, int id) {
         float rt = Mathf.Repeat(time, kCycle) / kCycle;
         float t = (rt - thresholds[2 * id]) / (thresholds[2 * id + 1] - thresholds[2 * id]);
-        return 1 - 2 * Mathf.Abs(0.5f - t);
+        return 1 - t; // 2 * Mathf.Abs(0.5f - t);
     }
 
     public static float InterpolateHeight (float time, int id) {

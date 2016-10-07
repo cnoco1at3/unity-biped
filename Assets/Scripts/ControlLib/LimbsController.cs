@@ -99,8 +99,8 @@ public class LimbsController : CharaController {
     }
 
     public override AnimMode GetCurrentMode () {
-         return AnimMode.kStance;
-        //return PhaseManager.GetCurrentPhase(Time.time, ctrl_id);
+        // return AnimMode.kStance;
+        return PhaseManager.GetCurrentPhase(Time.time, ctrl_id);
     }
 
     private Vector3 IPMError () {
@@ -109,10 +109,8 @@ public class LimbsController : CharaController {
 
         float g = Mathf.Abs(Physics.gravity.y);
 
-        d.y = 0;
         d *= Mathf.Sqrt(com.y / g + Vector3.SqrMagnitude(d) / (4 * g * g));
         d -= _config.kVAlpha * _config.kDV;
-        d.y = 0;
 
         return d;
     }
