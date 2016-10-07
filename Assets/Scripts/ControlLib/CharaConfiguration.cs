@@ -13,7 +13,12 @@ public class CharaConfiguration{
 
     private bool _debug = false;
 
-    public CharaConfiguration (Configuration config, List<GameObject[]> body_list, List<GameObject[]> limbs_list, bool debug = false) {
+    public CharaConfiguration (Configuration config, Rigidbody body_root, 
+        List<GameObject[]> body_list, 
+        List<GameObject[]> limbs_list, 
+        bool debug = false) {
+
+        root = body_root;
         _debug = debug;
         _config = config;
         _body_list = body_list;
@@ -22,13 +27,17 @@ public class CharaConfiguration{
         controllers = new List<CharaController>();
 
         foreach (GameObject[] limbs in _limbs_list) {
-            LimbsController limbs_ctrl = new LimbsController(this, _config, limbs);
+            LimbsController limbs_ctrl = new LimbsController(this, _config, limbs, debug);
             controllers.Add(limbs_ctrl);
         }
 
         foreach(GameObject[] body in body_list) {
-            CharaController body_ctrl = new CharaController();
+            CharaController body_ctrl = new CharaController(this, _config, body, debug);
             controllers.Add(body_ctrl);
+        }
+
+        if (_debug) {
+            Debug.Log("CharaConfiguration Constructor");
         }
     }
 
