@@ -1,0 +1,33 @@
+﻿Shader "Custom/TestShader"
+{
+    Properties
+    {
+        _Color ("Main Color", Color) = (1,1,1,1)
+        _MainTex ("Base (RGB) Trans. (Alpha)", 2D) = "white" { }
+    }
+
+    Category
+    {
+		Stencil {
+		Ref 1
+		Comp Equal
+		}
+		ZWrite On
+	   	ZTest LEqual
+        Alphatest Greater 0.5
+        Cull Off
+        SubShader
+
+        {
+            Pass
+            {
+                Lighting Off
+                SetTexture [_MainTex]
+                {
+                    constantColor [_Color]
+                    Combine texture * constant, texture * constant 
+                } 
+            }
+        } 
+    }
+}

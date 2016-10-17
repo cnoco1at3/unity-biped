@@ -94,10 +94,13 @@
      <None Include="Assets\TangoSDK\Examples\ExperimentalMeshOcclusion\Shaders\OcclusionMask.shader" />
      <None Include="Assets\LeapMotion\Resources\PassthroughBackground.shader" />
      <None Include="Assets\TangoSDK\Core\Shaders\ColorCameraEmulation.shader" />
+     <None Include="Assets\Materials\GridShader.shader" />
      <None Include="Assets\TangoPrefabs\Shaders\PointCloud_Occlusion.shader" />
      <None Include="Assets\TangoSDK\Examples\ExperimentalMeshOcclusion\Shaders\TangoOcclusion.cginc" />
      <None Include="Assets\Plugins\Android\AndroidManifest.xml" />
      <None Include="Assets\LeapMotion\Version.txt" />
+     <None Include="Assets\Materials\MaskShader.shader" />
+     <None Include="Assets\Materials\TestShader.shader" />
      <None Include="Assets\TangoPrefabs\Shaders\TangoEnvironmentalLighting\EnvironmentalLightingDiffuse.shader" />
  <Reference Include="UnityEditor.Advertisements">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/Advertisements/Editor/UnityEditor.Advertisements.dll</HintPath>

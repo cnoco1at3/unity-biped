@@ -19,3 +19,5 @@ EditorBuildSettings:
     path: Assets/TangoSDK/Examples/Scenes/AreaLearning.unity
   - enabled: 0
     path: Assets/TangoSDK/Examples/Scenes/PointCloud.unity
+  - enabled: 0
+    path: Assets/TangoSDK/Examples/Scenes/SimpleAugmentedReality.unity
