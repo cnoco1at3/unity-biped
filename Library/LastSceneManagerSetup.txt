@@ -1,4 +1,0 @@
-sceneSetups:
-- path: C:/Users/Ralph/Documents/GitHub/research/researchlab/Assets/Runtime/Scenes/ACE/ACEv2/robot-fall.unity
-  isLoaded: 1
-  isActive: 1
