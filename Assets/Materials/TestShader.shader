@@ -8,20 +8,16 @@
 
     Category
     {
-		Stencil {
-		Ref 1
-		Comp Equal
-		}
 		ZWrite On
 	   	ZTest LEqual
-        Alphatest Greater 0.5
-        Cull Off
+	   	Blend SrcAlpha OneMinusSrcAlpha
+        Cull Back
+		Lighting Off
         SubShader
-
         {
+        	Tags {"Queue" = "Geometry+1"}
             Pass
             {
-                Lighting Off
                 SetTexture [_MainTex]
                 {
                     constantColor [_Color]

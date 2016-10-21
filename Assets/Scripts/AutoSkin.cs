@@ -41,4 +41,5 @@ public class AutoSkin : MonoBehaviour {
 		rend.bones = bones;
 		rend.sharedMesh = mesh;
 	}
+
 }

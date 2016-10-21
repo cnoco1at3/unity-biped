@@ -8,19 +8,19 @@ Shader "Custom/MaskShader"
 
     Category
     {
-		ZWrite Off
+		ZWrite On
 	   	ZTest LEqual
 	   	ColorMask 0
         Cull Back
         SubShader
 
         {
+        	Tags {"Queue" = "Geometry+4"}
             Pass
             {
 			Stencil {
 			Comp Always
 			Pass IncrSat
-			ZFail Zero
 			}
                 Lighting Off
                 SetTexture [_MainTex]
