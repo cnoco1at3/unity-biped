@@ -50,6 +50,8 @@ public class ControlEngine : MonoBehaviour {
         _motion_generator.GenerateTargetPose();
         _motion_generator.ApplyTargetPose();
 
+        _chara.root.AddForce(_config.kDV * 10);
+
     }
 
     void KeyboardInteraction () {
