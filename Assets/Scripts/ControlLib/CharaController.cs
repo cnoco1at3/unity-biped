@@ -85,8 +85,5 @@ public class CharaController {
             _joints[i].angularXDrive = drive;
             _joints[i].angularYZDrive = drive;
         }
-        foreach (GameObject obj in _objs) {
-            obj.AddComponent<RigInteractor>();
-        }
     }
 }

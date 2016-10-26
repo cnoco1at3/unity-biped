@@ -35,21 +35,20 @@ public class LimbsController : CharaController
         }
         else
         {
-            _ik_target = _objs[_objs.Length - 1].transform.position + FootError(_objs.Length - 1);
+            _ik_target = _objs[0].transform.position + FootError(_objs.Length - 1);
             _ik_target.y = 0;
         }
 
         // 1st pass IK solving
         for (int i = 0; i < _objs.Length; ++i)
             _target_pos[i] = _objs[i].transform.position;
-        FABRIKSolver.SolveIKWithVectorConstraint(ref _target_pos, _ik_target, _chara.root.transform.forward);
+        FABRIKSolver.SolveIKWithVectorConstraint(ref _target_pos, _ik_target, Vector3.forward);
 
         // 2nd pass IK solving
         //if (GetCurrentMode() == AnimMode.kSwing)
-            _ik_target = _objs[0].transform.position;
-        /*else
-            _ik_target = _objs[_objs.Length - 1].transform.localToWorldMatrix.MultiplyPoint(_rigs[_objs.Length - 1].centerOfMass);
-            */
+            _ik_target = _objs[_objs.Length - 1].transform.position;
+        //else
+            //_ik_target = _objs[_objs.Length - 1].transform.localToWorldMatrix.MultiplyPoint(_rigs[_objs.Length - 1].centerOfMass);
 
         _ik_target.y = _config.kDH;
         _ik_target += _config.kDV * Time.fixedDeltaTime;
@@ -120,7 +119,7 @@ public class LimbsController : CharaController
 
     private Vector3 IPMError()
     {
-        Vector3 d = _chara.root.velocity;
+        Vector3 d = _chara.root.velocity + _config.kDV;
         Vector3 com = _chara.GetCenterOfMass();
 
         float g = Mathf.Abs(Physics.gravity.y);

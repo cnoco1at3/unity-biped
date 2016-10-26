@@ -2341,7 +2341,7 @@ MonoBehaviour:
   - {fileID: 117528}
   - {fileID: 188062}
   - {fileID: 193702}
-  debug: 1
+  debug: 0
 --- !u!135 &13500848
 SphereCollider:
   m_ObjectHideFlags: 1
