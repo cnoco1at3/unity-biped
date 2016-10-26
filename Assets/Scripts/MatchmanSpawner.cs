@@ -29,43 +29,60 @@ using UnityEngine;
 /// </summary>
 public class MatchmanSpawner : MonoBehaviour 
 {
-	[SerializeField] GameObject Matchman;
-	[SerializeField] GameObject Marker;
-	[SerializeField] Camera TangoCam;
-	GameObject curMatchman;
+	[SerializeField] GameObject matchman;
+	[SerializeField] GameObject marker;
+	[SerializeField] Camera tangoCam;
+	Vector3 o_rootRot;
+	Vector3 o_parentRot;
 	RaycastHit hitInfo;
-    
+	bool spawning;
+
+	void Start()
+	{
+		o_parentRot = matchman.transform.eulerAngles;
+		o_rootRot = matchman.GetComponent<ControlEngine>().root.transform.localEulerAngles;
+	}
+
     /// <summary>
     /// Update is called once per frame.
     /// </summary>
     public void Update()
     {
-		if (Physics.Raycast(TangoCam.ScreenPointToRay(new Vector3(Screen.width / 2.0f, Screen.height / 2.0f)), out hitInfo))
+		if (Physics.Raycast(tangoCam.ScreenPointToRay(new Vector3(Screen.width / 2.0f, Screen.height / 2.0f)), out hitInfo))
 		{
-			Marker.transform.position = new Vector3(hitInfo.point.x, hitInfo.point.y+1, hitInfo.point.z);
-		}
-		if (Input.GetKeyDown(KeyCode.Space))
-		{
-			if (Physics.Raycast(TangoCam.ScreenPointToRay(new Vector3(Screen.width / 2.0f, Screen.height / 2.0f)), out hitInfo))
+			marker.transform.position = new Vector3(hitInfo.point.x, hitInfo.point.y, hitInfo.point.z);
+			if (spawning || Input.GetKeyDown(KeyCode.Space))
 			{
 				// Limit distance of the marker position from the camera to the camera's far clip plane. This makes sure that the marker
 				// is visible on screen when the floor is found.
-				if (curMatchman == null)
-					curMatchman = Instantiate (Matchman);
-				curMatchman.transform.position = new Vector3(hitInfo.point.x, hitInfo.point.y+2, hitInfo.point.z);
-//				Vector3 cameraBase = new Vector3(Camera.main.transform.position.x, hitInfo.point.y, Camera.main.transform.position.z);
-//				target = cameraBase + Vector3.ClampMagnitude(hitInfo.point - cameraBase, Camera.main.farClipPlane * 0.9f);
-			}
-		}
-		for (var i = 0; i < Input.touchCount; ++i) {
-			if (Input.GetTouch (i).phase == TouchPhase.Began) {
-				if (Physics.Raycast(TangoCam.ScreenPointToRay(new Vector3(Screen.width / 2.0f, Screen.height / 2.0f)), out hitInfo))
-				{
-					if (curMatchman == null)
-					curMatchman = Instantiate (Matchman);
-					curMatchman.transform.position = new Vector3(hitInfo.point.x, hitInfo.point.y+2, hitInfo.point.z);
-				}
+//				Vector3 cameraBase = new Vector3(tangoCam.transform.position.x, hitInfo.point.y+4, tangoCam.transform.position.z);
+//				Vector3 target = cameraBase + Vector3.ClampMagnitude(hitInfo.point - cameraBase, tangoCam.farClipPlane * 0.9f);
+				matchman.SetActive(false);
+				matchman.transform.position = new Vector3(hitInfo.point.x, hitInfo.point.y+1.2f, hitInfo.point.z);
+				matchman.transform.eulerAngles = o_parentRot;
+				matchman.GetComponent<ControlEngine>().root.transform.localPosition = new Vector3(0,0,0);
+				matchman.GetComponent<ControlEngine>().root.transform.localEulerAngles = o_rootRot;
+				matchman.SetActive(true);
+				spawning = false;
 			}
 		}
 	}
+
+	public void OnGUI()
+	{
+		GUI.color = Color.white;
+
+		if (!spawning)
+		{
+			if (GUI.Button(new Rect(20, 20, 200, 80), "<size=30>Find Floor</size>"))
+			{
+				spawning = true;
+			}
+		}
+		else
+		{
+			GUI.Label(new Rect(0, Screen.height - 50, Screen.width, 50), "<size=30>Spawning character...</size>");
+		}
+	}
+
 }

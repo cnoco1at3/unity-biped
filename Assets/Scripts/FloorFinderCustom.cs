@@ -111,7 +111,7 @@ public class FloorFinderCustom : MonoBehaviour
 			m_marker.SetActive(false);
 			m_marker.transform.position = target;
 			m_marker.SetActive(true);
-			m_tangoApplication.SetDepthCameraRate(TangoEnums.TangoDepthCameraRate.DISABLED);
+//			m_tangoApplication.SetDepthCameraRate(TangoEnums.TangoDepthCameraRate.DISABLED);
 			AndroidHelper.ShowAndroidToastMessage(string.Format("Floor found. Unity world height = {0}", m_pointCloudFloor.transform.position.y.ToString()));
 		}
 	}

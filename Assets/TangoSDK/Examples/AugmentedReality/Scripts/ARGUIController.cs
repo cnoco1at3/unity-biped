@@ -290,7 +290,6 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
     /// </summary>
     public void OnTangoServiceConnected()
     {
-		print("HELLO");
         m_tangoApplication.SetDepthCameraRate(TangoEnums.TangoDepthCameraRate.DISABLED);
     }
     
