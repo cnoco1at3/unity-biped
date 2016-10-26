@@ -25,7 +25,7 @@ public class RigManager : MonoBehaviour {
 	}
 
 	void PrepareForRig() {
-		curBones = curCharacter.GetComponentInChildren<Controller>().root.GetComponentsInChildren<Transform>();
+		curBones = curCharacter.GetComponentInChildren<ControlEngine>().root.GetComponentsInChildren<Transform>();
 		defaultBonesPos = new Vector3[curBones.Length];
 		for (int i = 0; i < curBones.Length; i++) {
 			defaultBonesPos [i] = curBones [i].position;
