@@ -162,6 +162,11 @@ namespace Tango
         public bool m_videoOverlayUseByteBufferMethod = false;
         
         /// <summary>
+        /// Whether to keep screen always awake throughout the whole application session.
+        /// </summary>
+        public bool m_keepScreenAwake = false;
+
+        /// <summary>
         /// Whether to adjust the size of the application's main render buffer
         /// for performance reasons (Some Tango devices have very high-resolution
         /// displays, so this option exists as a hint that this may be necessary).
@@ -222,12 +227,56 @@ namespace Tango
 
         private PermissionsTypes m_requiredPermissions = 0;
         private IntPtr m_callbackContext = IntPtr.Zero;
-        private bool m_isServiceInitialized = false;
-        private bool m_isServiceConnected = false;
+
+        /// <summary>
+        /// If true, the device has a compatible version of Tango Core. Otherwise false.
+        /// </summary>
+        private bool m_isTangoUpToDate = false;
+
+        /// <summary>
+        /// If true, the TangoService is running and providing data to client, e.g motion tracking 
+        /// and point cloud data. Otherwise false.
+        /// </summary>
+        private bool m_isTangoStarted = false;
+
+        /// <summary>
+        /// If true, the TangoApplication instance will request permission when application is resumed.
+        /// Otherwise false. This is used to handle Tango Service connection when application resumed from
+        /// pause.
+        /// </summary>
         private bool m_shouldReconnectService = false;
+
+        /// <summary>
+        /// The flag to transfer permission event from Android main thread to Unity main thread
+        /// (Update function).
+        /// </summary>
         private bool m_sendPermissions = false;
         private bool m_permissionsSuccessful = false;
+
+        /// <summary>
+        /// The flag to transferm service connected events from the Android main thread to Unity
+        /// main thread.
+        /// </summary>
+        private bool m_sendTangoServiceConnectedEvent;
+        private AndroidJavaObject m_tangoServiceConnectedBinder;
+
+        /// <summary>
+        /// The flag to transfer service disconnected events from the Android main thread to Unity
+        /// main thread.
+        /// </summary>
+        private bool m_sendTangoServiceDisconnectedEvent;
+
+        /// <summary>
+        /// The flag to transfer onDisplayChanged event from Android main thread to Unity main thread
+        /// (Update function).
+        /// </summary>
         private bool m_displayChanged = false;
+
+        /// <summary>
+        /// The last-known depth camera rate.
+        /// </summary>
+        private int m_appDepthCameraRate = 5;
+
         private YUVTexture m_yuvTexture;
         private TangoConfig m_tangoConfig;
         private TangoConfig m_tangoRuntimeConfig;
@@ -258,7 +307,8 @@ namespace Tango
             NONE = 0,
             MOTION_TRACKING = 0x1,
             AREA_LEARNING = 0x2,
-            SERVICE_BOUND = 0x4,
+            ANDROID_CAMERA = 0x4,
+            SERVICE_BOUND = 0x8,
         }
 
         /// <summary>
@@ -267,7 +317,7 @@ namespace Tango
         /// <value><c>true</c> if connected to a Tango service; otherwise, <c>false</c>.</value>
         public bool IsServiceConnected
         {
-            get { return m_isServiceConnected; }
+            get { return m_isTangoStarted; }
         }
 
         /// <summary>
@@ -688,6 +738,7 @@ namespace Tango
 
             m_tangoRuntimeConfig.SetInt32(TangoConfig.Keys.RUNTIME_DEPTH_FRAMERATE, rate);
             m_tangoRuntimeConfig.SetRuntimeConfig();
+            m_appDepthCameraRate = rate;
         }
 
         /// <summary>
@@ -923,6 +974,7 @@ namespace Tango
         private void _ResumeTangoServices()
         {
             RequestPermissions();
+            SetDepthCameraRate(m_appDepthCameraRate);
         }
         
         /// <summary>
@@ -1062,7 +1114,7 @@ namespace Tango
                 }
             }
 
-            m_isServiceInitialized = true;
+            m_isTangoUpToDate = true;
             Debug.Log(CLASS_NAME + ".Initialize() Tango was initialized!");
             return true;
         }
@@ -1074,14 +1126,15 @@ namespace Tango
         {
             Debug.Log("TangoApplication._TangoConnect()");
 
-            if (!m_isServiceInitialized)
+            if (!m_isTangoUpToDate)
             {
                 return;
             }
 
-            if (!m_isServiceConnected)
+            if (!m_isTangoStarted)
             {
-                m_isServiceConnected = true;
+                m_isTangoStarted = true;
+
                 AndroidHelper.PerformanceLog("Unity _TangoConnect start");
                 if (API.TangoService_connect(m_callbackContext, m_tangoConfig.GetHandle()) != Common.ErrorType.TANGO_SUCCESS)
                 {
@@ -1106,17 +1159,16 @@ namespace Tango
         /// </summary>
         private void _TangoDisconnect()
         {
-            AndroidHelper.UnbindTangoService();
-
-            if (!m_isServiceConnected)
+            if (!m_isTangoStarted)
             {
+                AndroidHelper.UnbindTangoService();
                 Debug.Log(CLASS_NAME + ".Disconnect() Not disconnecting from Tango Service "
                           + "as this TangoApplication was not connected");
                 return;
             }
 
             Debug.Log(CLASS_NAME + ".Disconnect() Disconnecting from the Tango Service");
-            m_isServiceConnected = false;
+            m_isTangoStarted = false;
 
             // This is necessary because tango_client_api clears camera callbacks when
             // TangoService_disconnect() is called, unlike other callbacks.
@@ -1130,6 +1182,7 @@ namespace Tango
                 OnTangoDisconnect();
             }
 
+            AndroidHelper.UnbindTangoService();
 #if UNITY_EDITOR
             PoseProvider.ResetTangoEmulation();
 #endif
@@ -1140,7 +1193,7 @@ namespace Tango
         /// </summary>
         private void _androidOnPause()
         {
-            if (m_isServiceConnected && m_requiredPermissions == PermissionsTypes.NONE)
+            if (m_isTangoStarted && m_requiredPermissions == PermissionsTypes.NONE)
             {
                 Debug.Log("Pausing services");
                 m_shouldReconnectService = true;
@@ -1181,7 +1234,7 @@ namespace Tango
                 {
                     if (resultCode == (int)Common.AndroidResult.SUCCESS)
                     {
-                        _FlipBitAndCheckPermissions(PermissionsTypes.MOTION_TRACKING);
+                        _ClearBitAndCheckPermissions(PermissionsTypes.MOTION_TRACKING);
                     }
                     else
                     {
@@ -1195,7 +1248,7 @@ namespace Tango
                 {
                     if (resultCode == (int)Common.AndroidResult.SUCCESS)
                     {
-                        _FlipBitAndCheckPermissions(PermissionsTypes.AREA_LEARNING);
+                        _ClearBitAndCheckPermissions(PermissionsTypes.AREA_LEARNING);
                     }
                     else
                     {
@@ -1215,22 +1268,49 @@ namespace Tango
         }
 
         /// <summary>
+        /// EventHandler for Android's on request permission result.
+        /// </summary>
+        /// <param name="requestCode">Request code.</param>
+        /// <param name="permissions">Permissions requested.</param>
+        /// <param name="grantResults">Grant result for each corresponding permission.</param>
+        private void _androidOnRequestPermissionsResult(
+            int requestCode, string[] permissions, AndroidPermissionGrantResult[] grantResults)
+        {
+            Debug.Log("Request permissions reuslt, request code : " + requestCode);
+            if (requestCode == Common.ANDROID_PERMISSION_REQUEST_CODE)
+            {
+                for (int it = 0; it < permissions.Length; ++it)
+                {
+                    string permission = permissions[it];
+                    AndroidPermissionGrantResult grantResult = grantResults[it];
+                    Debug.LogFormat("Permission={0}, result={1}", permission, grantResult);
+
+                    if (grantResult == AndroidPermissionGrantResult.GRANTED)
+                    {
+                        if (permission == Common.ANDROID_CAMERA_PERMISSION)
+                        {
+                            _ClearBitAndCheckPermissions(PermissionsTypes.ANDROID_CAMERA);
+                        }
+                    }
+                    else
+                    {
+                        _PermissionWasDenied();
+                    }
+                }
+            }
+
+            Debug.Log("Request permissions result end");
+        }
+
+        /// <summary>
         /// Delegate for when connected to the Tango Android service.
         /// </summary>
         /// <param name="binder">Binder for the service.</param>
         private void _androidOnTangoServiceConnected(AndroidJavaObject binder)
         {
             Debug.Log("_androidOnTangoServiceConnected");
-
-            // By keeping this logic in C#, the client app can respond if this call fails.
-            int result = AndroidHelper.TangoSetBinder(binder);
-            if (result != Common.ErrorType.TANGO_SUCCESS)
-            {
-                Debug.Log("Error when calling TangoService_setBinder " + result);
-                _PermissionWasDenied();
-            }
-
-            _FlipBitAndCheckPermissions(PermissionsTypes.SERVICE_BOUND);
+            m_sendTangoServiceConnectedEvent = true;
+            m_tangoServiceConnectedBinder = binder;
         }
 
         /// <summary>
@@ -1239,6 +1319,7 @@ namespace Tango
         private void _androidOnTangoServiceDisconnected()
         {
             Debug.Log("_androidOnTangoServiceDisconnected");
+            m_sendTangoServiceDisconnectedEvent = true;
         }
 
         /// <summary>
@@ -1266,6 +1347,7 @@ namespace Tango
             AndroidHelper.RegisterOnDisplayChangedEvent(_androidOnDisplayChanged);
             AndroidHelper.RegisterOnTangoServiceConnected(_androidOnTangoServiceConnected);
             AndroidHelper.RegisterOnTangoServiceDisconnected(_androidOnTangoServiceDisconnected);
+            AndroidHelper.RegisterOnRequestPermissionsResultEvent(_androidOnRequestPermissionsResult);
 
             if (m_enableDepth)
             {
@@ -1306,6 +1388,11 @@ namespace Tango
             // propogate those events if they happen.
             AreaDescriptionEventListener.SetCallback();
 
+            if (m_keepScreenAwake)
+            {
+                Screen.sleepTimeout = SleepTimeout.NeverSleep;
+            }
+
 #if UNITY_EDITOR
             if (m_doSlowEmulation && (m_enableDepth || m_enableVideoOverlay))
             {
@@ -1334,7 +1421,15 @@ namespace Tango
 #else
             if (m_requiredPermissions == PermissionsTypes.NONE)
             {
-                m_requiredPermissions |= (m_enableAreaDescriptions && !m_enableDriftCorrection) ? PermissionsTypes.AREA_LEARNING : PermissionsTypes.NONE;
+                if (m_enableVideoOverlay || m_enableDepth)
+                {
+                    m_requiredPermissions |= PermissionsTypes.ANDROID_CAMERA;
+                }
+
+                if (m_enableAreaDescriptions && !m_enableDriftCorrection)
+                {
+                    m_requiredPermissions |= PermissionsTypes.AREA_LEARNING;
+                }
             }
 
             // It is always required to rebind to the service.
@@ -1346,9 +1441,9 @@ namespace Tango
         /// Flip a permission bit and check to see if all permissions were accepted.
         /// </summary>
         /// <param name="permission">Permission bit to flip.</param>
-        private void _FlipBitAndCheckPermissions(PermissionsTypes permission)
+        private void _ClearBitAndCheckPermissions(PermissionsTypes permission)
         {
-            m_requiredPermissions ^= permission;
+            m_requiredPermissions &= ~permission;
             
             if (m_requiredPermissions == 0)
             {
@@ -1409,6 +1504,21 @@ namespace Tango
                     AndroidHelper.StartTangoPermissionsActivity(Common.TANGO_ADF_LOAD_SAVE_PERMISSIONS);
                 }
             }
+            else if ((m_requiredPermissions & PermissionsTypes.ANDROID_CAMERA) == PermissionsTypes.ANDROID_CAMERA)
+            {
+                if (AndroidHelper.CheckPermission(Common.ANDROID_CAMERA_PERMISSION))
+                {
+                    string[] permissionList = new string[] { Common.ANDROID_CAMERA_PERMISSION };
+                    AndroidPermissionGrantResult[] resultList = new AndroidPermissionGrantResult[] { AndroidPermissionGrantResult.GRANTED };
+                    _androidOnRequestPermissionsResult(Common.ANDROID_PERMISSION_REQUEST_CODE, 
+                                                       permissionList, resultList);
+                }
+                else
+                {
+                    AndroidHelper.RequestPermission(Common.ANDROID_CAMERA_PERMISSION,
+                                                    Common.ANDROID_PERMISSION_REQUEST_CODE);
+                }
+            }
             else if ((m_requiredPermissions & PermissionsTypes.SERVICE_BOUND) == PermissionsTypes.SERVICE_BOUND)
             {
                 if (!AndroidHelper.BindTangoService())
@@ -1467,6 +1577,27 @@ namespace Tango
         /// </summary>
         private void Update()
         {
+            if (m_sendTangoServiceDisconnectedEvent)
+            {
+                _TangoDisconnect();
+                m_sendTangoServiceDisconnectedEvent = false;
+            }
+
+            if (m_sendTangoServiceConnectedEvent)
+            {
+                // By keeping this logic in C#, the client app can respond if this call fails.
+                int result = AndroidHelper.TangoSetBinder(m_tangoServiceConnectedBinder);
+                if (result != Common.ErrorType.TANGO_SUCCESS)
+                {
+                    Debug.Log("Error when calling TangoService_setBinder " + result);
+                    _PermissionWasDenied();
+                }
+
+                _ClearBitAndCheckPermissions(PermissionsTypes.SERVICE_BOUND);
+                m_sendTangoServiceConnectedEvent = false;
+                m_tangoServiceConnectedBinder = null;
+            }
+
             // Autoconnect requesting permissions can not be moved earlier into Awake() or Start().  All other scripts
             // must be able to register for the permissions callback before RequestPermissions() is called.  The
             // earliest another script can register is in Start().  Therefore, this logic must be run after Start() has
@@ -1497,7 +1628,7 @@ namespace Tango
 
             // Update any emulation
 #if UNITY_EDITOR
-            if(m_isServiceConnected)
+            if(m_isTangoStarted)
             {
                 PoseProvider.UpdateTangoEmulation();
                 if (m_doSlowEmulation)
@@ -1526,7 +1657,7 @@ namespace Tango
                 m_tango3DReconstruction.SendEventIfAvailable();
             }
 
-            if (m_displayChanged && m_isServiceConnected)
+            if (m_displayChanged && m_isTangoStarted)
             {
                 OrientationManager.Rotation displayRotation = AndroidHelper.GetDisplayRotation();
                 OrientationManager.Rotation colorCameraRotation = AndroidHelper.GetColorCameraRotation();

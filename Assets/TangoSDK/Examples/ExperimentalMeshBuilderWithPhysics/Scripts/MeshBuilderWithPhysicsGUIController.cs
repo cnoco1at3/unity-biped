@@ -56,7 +56,10 @@ public class MeshBuilderWithPhysicsGUIController : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.Escape))
         {
-            Application.Quit();
+            // This is a fix for a lifecycle issue where calling
+            // Application.Quit() here, and restarting the application
+            // immediately results in a deadlocked app.
+            AndroidHelper.AndroidQuit();
         }
     }
 
@@ -85,5 +88,19 @@ public class MeshBuilderWithPhysicsGUIController : MonoBehaviour
             m_dynamicMesh.ExportMeshToObj(filepath);
             Debug.Log(filepath);
         }
+    }
+
+    /// <summary>
+    /// Called after the application gets paused or resumed.
+    /// </summary>
+    /// <param name="pauseStatus">
+    /// If set to <c>true</c> this is the pause event, otherwise this is the resume event.
+    /// </param>
+    public void OnApplicationPause(bool pauseStatus)
+    {
+        // Since motion tracking is lost when disconnected from Tango, any
+        // existing 3D reconstruction state no longer is lined up with the
+        // real world. Best we can do is clear the state.
+        m_dynamicMesh.Clear();
     }
 }

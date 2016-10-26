@@ -30,6 +30,8 @@ using UnityEngine;
 public class MatchmanSpawner : MonoBehaviour 
 {
 	[SerializeField] GameObject Matchman;
+	[SerializeField] GameObject Marker;
+	[SerializeField] Camera TangoCam;
 	GameObject curMatchman;
 	RaycastHit hitInfo;
     
@@ -38,25 +40,32 @@ public class MatchmanSpawner : MonoBehaviour
     /// </summary>
     public void Update()
     {
+		if (Physics.Raycast(TangoCam.ScreenPointToRay(new Vector3(Screen.width / 2.0f, Screen.height / 2.0f)), out hitInfo))
+		{
+			Marker.transform.position = new Vector3(hitInfo.point.x, hitInfo.point.y+1, hitInfo.point.z);
+		}
 		if (Input.GetKeyDown(KeyCode.Space))
 		{
-			if (Physics.Raycast(Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2.0f, Screen.height / 2.0f)), out hitInfo))
+			if (Physics.Raycast(TangoCam.ScreenPointToRay(new Vector3(Screen.width / 2.0f, Screen.height / 2.0f)), out hitInfo))
 			{
 				// Limit distance of the marker position from the camera to the camera's far clip plane. This makes sure that the marker
 				// is visible on screen when the floor is found.
 				if (curMatchman == null)
 					curMatchman = Instantiate (Matchman);
-				curMatchman.transform.position = new Vector3(hitInfo.point.x, hitInfo.point.y+1, hitInfo.point.z);
+				curMatchman.transform.position = new Vector3(hitInfo.point.x, hitInfo.point.y+2, hitInfo.point.z);
 //				Vector3 cameraBase = new Vector3(Camera.main.transform.position.x, hitInfo.point.y, Camera.main.transform.position.z);
 //				target = cameraBase + Vector3.ClampMagnitude(hitInfo.point - cameraBase, Camera.main.farClipPlane * 0.9f);
 			}
-			for (var i = 0; i < Input.touchCount; ++i) {
-				if (Input.GetTouch (i).phase == TouchPhase.Began) {
+		}
+		for (var i = 0; i < Input.touchCount; ++i) {
+			if (Input.GetTouch (i).phase == TouchPhase.Began) {
+				if (Physics.Raycast(TangoCam.ScreenPointToRay(new Vector3(Screen.width / 2.0f, Screen.height / 2.0f)), out hitInfo))
+				{
 					if (curMatchman == null)
-						curMatchman = Instantiate (Matchman);
-					curMatchman.transform.position = new Vector3(hitInfo.point.x, hitInfo.point.y+1, hitInfo.point.z);
+					curMatchman = Instantiate (Matchman);
+					curMatchman.transform.position = new Vector3(hitInfo.point.x, hitInfo.point.y+2, hitInfo.point.z);
 				}
 			}
 		}
-    }
+	}
 }
