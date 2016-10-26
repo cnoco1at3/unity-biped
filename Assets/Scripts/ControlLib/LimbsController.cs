@@ -35,7 +35,7 @@ public class LimbsController : CharaController
         }
         else
         {
-            _ik_target = _objs[0].transform.position + FootError(_objs.Length - 1);
+            _ik_target = _objs[_objs.Length - 1].transform.position + FootError(_objs.Length - 1);
             _ik_target.y = 0;
         }
 

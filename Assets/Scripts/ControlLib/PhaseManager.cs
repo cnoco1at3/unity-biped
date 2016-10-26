@@ -3,7 +3,7 @@ using System.Collections;
 
 public class PhaseManager {
 
-    public const float kCycle = 1.0f;
+    public const float kCycle = 1.2f;
     private static float[] thresholds = { 0.1f, 0.4f, 0.6f, 0.9f };
     private static float[] param = { 0.0f, 0.5f, 0.5f, 1.0f };
 

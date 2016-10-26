@@ -38,8 +38,8 @@ public class ControlEngine : MonoBehaviour {
 
     void Update () {
         /* wasd control */
-        if (debug)
-            KeyboardInteraction();
+        //if (debug)
+            //KeyboardInteraction();
     }
 
     void FixedUpdate () {
@@ -50,7 +50,7 @@ public class ControlEngine : MonoBehaviour {
         _motion_generator.GenerateTargetPose();
         _motion_generator.ApplyTargetPose();
 
-        _chara.root.AddForce(_config.kDV * 10);
+        //_chara.root.AddForce(_config.kDV * 10);
 
     }
 
@@ -72,7 +72,7 @@ public class ControlEngine : MonoBehaviour {
         }
     }
 
-
+    /*
     void OnDrawGizmos () {
         if (debug) {
             for (int i = 0; i < _config.gizcolor.Count; ++i) {
@@ -81,4 +81,5 @@ public class ControlEngine : MonoBehaviour {
             }
         }
     }
+    */
 }

@@ -25,7 +25,7 @@ public class Configuration {
     public List<Color> gizcolor;
 
     public Configuration () {
-        kDV = new Vector3(0.0f, 0.0f, 10.0f);
+        kDV = new Vector3(0.0f, 0.0f, 0.1f);
         kD = 2 * Mathf.Sqrt(kP);
         gizmos = new List<Vector3>();
         gizcolor = new List<Color>();
