@@ -72,7 +72,7 @@ public class ControlEngine : MonoBehaviour {
         }
     }
 
-
+	/*
     void OnDrawGizmos () {
         if (debug) {
             for (int i = 0; i < _config.gizcolor.Count; ++i) {
@@ -81,4 +81,5 @@ public class ControlEngine : MonoBehaviour {
             }
         }
     }
+    */
 }
