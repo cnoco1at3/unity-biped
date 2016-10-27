@@ -12,7 +12,7 @@ public class ControlEngine : MonoBehaviour {
     private Configuration _config;
     private CharaConfiguration _chara;
     private MotionGenerator _motion_generator;
-    private Vector3 _desired_position = Vector3.zero;
+    private Vector3 _desired_position = new Vector3(0, 0, 10);
 
     public void SetDesiredPosition(Vector3 dP) {
         _desired_position = dP;
