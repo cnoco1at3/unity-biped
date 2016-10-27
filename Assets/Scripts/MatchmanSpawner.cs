@@ -63,8 +63,7 @@ public class MatchmanSpawner : MonoBehaviour
 				Animation a = GetComponentInChildren<Animation>();
 				a.Stop();
 				a.Play("ARMarkerShow", PlayMode.StopAll);
-				matchman.SetActive(false);
-				matchman.transform.position = new Vector3(hitInfo.point.x, hitInfo.point.y+0.2f, hitInfo.point.z);
+				matchman.transform.position = new Vector3(hitInfo.point.x, hitInfo.point.y+0.3f, hitInfo.point.z);
 				matchman.transform.eulerAngles = o_parentRot;
 				matchman.GetComponent<ControlEngine>().root.transform.localPosition = new Vector3(0,0,0);
 				matchman.GetComponent<ControlEngine>().root.transform.localEulerAngles = o_rootRot;
@@ -80,14 +79,14 @@ public class MatchmanSpawner : MonoBehaviour
 
 		if (!spawning)
 		{
-			if (GUI.Button(new Rect(20, 20, 500, 300), "<size=50>Place Character</size>"))
+			if (GUI.Button(new Rect(20, Screen.height - 280, 500, 230), "<size=50>Place Character</size>"))
 			{
 				spawning = true;
 			}
 		}
 		else
 		{
-			GUI.Label(new Rect(0, Screen.height - 50, Screen.width, 50), "<size=30>Spawning character...</size>");
+			GUI.Label(new Rect(20, Screen.height - 80, Screen.width, 80), "<size=50>Looking for floor...</size>");
 		}
 	}
 

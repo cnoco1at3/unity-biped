@@ -14,7 +14,7 @@ public class RigManager : MonoBehaviour {
 	[SerializeField] Transform leftViewJoints;
 	bool isRigging;
 
-	void Start()
+	void Awake()
 	{
 		DontDestroyOnLoad (this);
 		Screen.orientation = ScreenOrientation.Portrait;
@@ -26,7 +26,6 @@ public class RigManager : MonoBehaviour {
 
 	void PrepareForRig() {
 		curBones = curCharacter.GetComponentInChildren<ControlEngine>().root.GetComponentsInChildren<Transform>();
-		curCharacter.GetComponentInChildren<ControlEngine>().enabled = false;
 		defaultBonesPos = new Vector3[curBones.Length];
 		for (int i = 0; i < curBones.Length; i++) {
 			defaultBonesPos [i] = curBones [i].position;
@@ -117,7 +116,6 @@ public class RigManager : MonoBehaviour {
 	{
 		if (isRigging) {
 			BindMesh ();
-			curCharacter.GetComponentInChildren<ControlEngine>().enabled = true;
 			SetBodyPhysics (true);
 			SetCamera (worldCam);
 			// move back to default position
@@ -153,7 +151,8 @@ public class RigManager : MonoBehaviour {
 
 	public void SetBodyPhysics (bool isOn) {
 		foreach (Rigidbody rb in curCharacter.GetComponentsInChildren<Rigidbody>()) {
-			rb.isKinematic = !isOn;
+			if (rb.name != "aim")
+				rb.isKinematic = !isOn;
 		}
 	}
 
