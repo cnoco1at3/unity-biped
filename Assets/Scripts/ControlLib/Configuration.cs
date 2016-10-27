@@ -22,14 +22,14 @@ public class Configuration {
     // velocity tuning
     public float kV = 1f,
         kVAlpha = 0.05f,
-        kLiftH = 0.33f; // foot lift height
+        kLiftH = 0.32f; // foot lift height
 
     public List<Vector3> gizmos;
     public List<Color> gizcolor;
 
     public Configuration (float scale_factor) {
         this.scale_factor = scale_factor;
-        kDV = new Vector3(0.0f, 0.0f, 2.0f) * scale_factor;
+        kDV = new Vector3(0.0f, 0.0f, -2.0f) * scale_factor;
         kDH *= scale_factor;
         kLiftH *= scale_factor;
         // kP *= Mathf. (scale_factor);
