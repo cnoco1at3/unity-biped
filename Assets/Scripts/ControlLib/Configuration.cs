@@ -12,6 +12,7 @@ public class Configuration {
     /* global parameters */
 
     public float scale_factor = 1.0f;
+    public float ground_offset = 0.0f;
 
     public Vector3 kDV; // desired velocity
     public float kDH = 0.65f; // desired height

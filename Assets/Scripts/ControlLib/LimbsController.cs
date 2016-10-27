@@ -19,7 +19,7 @@ public class LimbsController : CharaController {
         // Assign IK target for swing or stance foot
         if (mode == AnimMode.kSwing) {
             _ik_target = _objs[0].transform.position + IPMError() + FootError(_objs.Length - 1);
-            _ik_target.y = _config.kLiftH * PhaseManager.InterpolateHeight(Time.time, ctrl_id);
+            _ik_target.y = _config.ground_offset + _config.kLiftH * PhaseManager.InterpolateHeight(Time.time, ctrl_id);
             if (_debug) {
                 // _config.gizmos.Add(_ik_target);
                 _config.gizmos.Add(_ik_target);
@@ -29,7 +29,7 @@ public class LimbsController : CharaController {
             }
         } else {
             _ik_target = _objs[0].transform.position + FootError(_objs.Length - 1);
-            _ik_target.y = 0;
+            _ik_target.y = _config.ground_offset;
         }
 
         // 1st pass IK solving
@@ -43,7 +43,7 @@ public class LimbsController : CharaController {
         //else
             _ik_target = _objs[0].transform.position;
 
-        _ik_target.y = _config.kDH;
+        _ik_target.y = _config.ground_offset + _config.kDH;
         _ik_target += _config.kDV * _config.kV * Time.fixedDeltaTime;
         FABRIKSolver.SolveIKWithVectorConstraint(ref _target_pos, _ik_target, _chara.root.transform.forward, true);
 
