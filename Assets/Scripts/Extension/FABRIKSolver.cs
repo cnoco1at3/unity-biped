@@ -12,9 +12,9 @@
 public static class FABRIKSolver {
 
     // error tolerance
-    private const float kMaxError = 0.01f;
+    private const float kMaxError = 0.002f;
     // maximum iteration times
-    private const int kMaxIteration = 40;
+    private const int kMaxIteration = 60;
 
     /*!
      * LimitedSolveIK - take initial position and target position in world 

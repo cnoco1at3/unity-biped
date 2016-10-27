@@ -13,11 +13,13 @@ public class ControlEngine : MonoBehaviour {
     private CharaConfiguration _chara;
     private MotionGenerator _motion_generator;
 
-    // Print debug info
+    public void SetDesiredVelocity(Vector3 dV) {
+        _config.kDV = dV;
+    }
 
-    void Start () {
+    void Start() {
         // Configuration
-        _config = new Configuration();
+        _config = new Configuration(gameObject.transform.localScale.x);
         // Character setup
         List<GameObject[]> body_list = new List<GameObject[]>();
         body_list.Add(arm_l);
@@ -29,20 +31,19 @@ public class ControlEngine : MonoBehaviour {
         _chara = new CharaConfiguration(_config, root.GetComponent<Rigidbody>(), body_list, limbs_list, debug);
         _motion_generator = new MotionGenerator(_chara, _config, debug);
 
-        root.AddComponent<RigInteractor>();
         /*
         if (debug)
             root.GetComponent<Rigidbody>().isKinematic = true;
             */
     }
 
-    void Update () {
+    void Update() {
         /* wasd control */
-        if (debug)
-            KeyboardInteraction();
+        //if (debug)
+        //KeyboardInteraction();
     }
 
-    void FixedUpdate () {
+    void FixedUpdate() {
         if (debug) {
             _config.gizmos.Clear();
             _config.gizcolor.Clear();
@@ -50,34 +51,27 @@ public class ControlEngine : MonoBehaviour {
         _motion_generator.GenerateTargetPose();
         _motion_generator.ApplyTargetPose();
 
-        _chara.root.AddForce(_config.kDV * 10);
-
     }
 
-    void KeyboardInteraction () {
+    void KeyboardInteraction() {
         if (Input.GetKey(KeyCode.W)) {
             _config.kDV = new Vector3(0.0f, 0.0f, 0.7f);
-        }
-        else if (Input.GetKey(KeyCode.A)) {
+        } else if (Input.GetKey(KeyCode.A)) {
             _config.kDV = new Vector3(-0.7f, 0.0f, 0.0f);
-        }
-        else if (Input.GetKey(KeyCode.S)) {
+        } else if (Input.GetKey(KeyCode.S)) {
             _config.kDV = new Vector3(0.0f, 0.0f, -0.3f);
-        }
-        else if (Input.GetKey(KeyCode.D)) {
+        } else if (Input.GetKey(KeyCode.D)) {
             _config.kDV = new Vector3(0.7f, 0.0f, 0.0f);
-        }
-        else {
+        } else {
             _config.kDV = Vector3.zero;
         }
     }
-
 
     void OnDrawGizmos () {
         if (debug) {
             for (int i = 0; i < _config.gizcolor.Count; ++i) {
                 Gizmos.color = _config.gizcolor[i];
-                Gizmos.DrawWireCube(_config.gizmos[i], new Vector3(0.1f, 0.1f, 0.1f));
+                Gizmos.DrawWireCube(_config.gizmos[i], _config.scale_factor * (new Vector3(0.1f, 0.1f, 0.1f)));
             }
         }
     }
