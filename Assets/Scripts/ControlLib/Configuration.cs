@@ -29,7 +29,7 @@ public class Configuration {
 
     public Configuration (float scale_factor) {
         this.scale_factor = scale_factor;
-        kDV = new Vector3(0.0f, 0.0f, -3.0f) * scale_factor;
+        kDV = Vector3.zero;
         kDH *= scale_factor;
         kLiftH *= scale_factor;
         // kP *= Mathf. (scale_factor);
