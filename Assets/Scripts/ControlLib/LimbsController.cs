@@ -8,7 +8,7 @@ public class LimbsController : CharaController {
     private int ctrl_id;
     private Vector3[] velocity_filter;
     private Vector3 filtered_velocity = Vector3.zero;
-    private const int filter_size = 32;
+    private const int filter_size = 64;
     private int filter_cursor = 0;
 
     // Constructor
