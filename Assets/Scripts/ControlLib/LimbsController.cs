@@ -6,11 +6,18 @@ public class LimbsController : CharaController {
     private Vector3 _ik_target;
     private static int ctrl_count = 0;
     private int ctrl_id;
+    private Vector3[] velocity_filter;
+    private Vector3 filtered_velocity = Vector3.zero;
+    private const int filter_size = 32;
+    private int filter_cursor = 0;
 
     // Constructor
     public LimbsController(CharaConfiguration chara, Configuration config, GameObject[] objs, bool debug = false)
         : base(chara, config, objs, debug) {
         ctrl_id = ctrl_count++;
+        velocity_filter = new Vector3[filter_size];
+        for (int i = 0; i < filter_size; ++i)
+            velocity_filter[i] = Vector3.zero;
     }
 
     public override void GenerateJointPositionTrajectory() {
@@ -50,14 +57,12 @@ public class LimbsController : CharaController {
         _ik_target.y = _config.ground_offset + _config.kDH;
         FABRIKSolver.SolveIKWithVectorConstraint(ref _target_pos, _ik_target, _chara.root.transform.forward, true);
 
-        /*
         if (_debug) {
             foreach (Vector3 target in _target_pos) {
                 _config.gizmos.Add(target);
                 _config.gizcolor.Add(Color.yellow);
             }
         }
-        */
     }
 
     public override void GenerateJointRotation() {
@@ -74,8 +79,11 @@ public class LimbsController : CharaController {
             }
 
             // Calculate local axis
-            Vector3 x = (_target_pos[i + 1] - _target_pos[i]).normalized;
-            Vector3 y = Vector3.Cross(x, _chara.root.transform.forward).normalized;
+            Vector3 x = _target_pos[i + 1] - _target_pos[i];
+            if(x == Vector3.zero) {
+                x = _config.kDV;
+            }
+            Vector3 y = Vector3.Cross(x, _chara.root.transform.forward);
             if (Vector3.Dot(y, _chara.root.transform.up) > 0)
                 y = -y;
             if (y == Vector3.zero)
@@ -109,6 +117,10 @@ public class LimbsController : CharaController {
 
     private Vector3 IPMError() {
         Vector3 d = _chara.root.velocity;
+        filtered_velocity = (filtered_velocity * filter_size - velocity_filter[filter_cursor] + d) / filter_size;
+        d = filtered_velocity;
+        velocity_filter[filter_cursor] = d;
+        filter_cursor = (filter_cursor + 1) % filter_size;
         //Vector3 com = _chara.GetCenterOfMass();
         Vector3 com = _chara.root.transform.position;
         com.y -= _config.ground_offset;

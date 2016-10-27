@@ -74,7 +74,7 @@ public class ControlEngine : MonoBehaviour {
     }
 
     void OnDrawGizmos() {
-        if (debug) {
+        if (debug && _config != null && _config.gizcolor != null) {
             for (int i = 0; i < _config.gizcolor.Count; ++i) {
                 Gizmos.color = _config.gizcolor[i];
                 Gizmos.DrawWireCube(_config.gizmos[i], _config.scale_factor * (new Vector3(0.1f, 0.1f, 0.1f)));
