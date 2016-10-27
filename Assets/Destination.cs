@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Destination : MonoBehaviour {
 	[SerializeField] Camera tangoCam;
-	private bool isDesignated {public get; set;}
+	public bool isDesignated {get;private set;}
 	Animation anim;
 	RaycastHit hitInfo;
 
