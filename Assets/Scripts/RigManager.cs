@@ -26,6 +26,7 @@ public class RigManager : MonoBehaviour {
 
 	void PrepareForRig() {
 		curBones = curCharacter.GetComponentInChildren<ControlEngine>().root.GetComponentsInChildren<Transform>();
+		curCharacter.GetComponentInChildren<ControlEngine>().enabled = false;
 		defaultBonesPos = new Vector3[curBones.Length];
 		for (int i = 0; i < curBones.Length; i++) {
 			defaultBonesPos [i] = curBones [i].position;
@@ -116,6 +117,7 @@ public class RigManager : MonoBehaviour {
 	{
 		if (isRigging) {
 			BindMesh ();
+			curCharacter.GetComponentInChildren<ControlEngine>().enabled = true;
 			SetBodyPhysics (true);
 			SetCamera (worldCam);
 			// move back to default position
@@ -156,7 +158,9 @@ public class RigManager : MonoBehaviour {
 	}
 
 	public void SetRigVisibility(bool isOn) {
-		foreach (MeshRenderer rend in curCharacter.GetComponentsInChildren<MeshRenderer>())
+		MeshRenderer[] jointMeshes = 
+			curCharacter.transform.FindChild("MatchMan").GetComponentsInChildren<MeshRenderer>();
+		foreach (MeshRenderer rend in jointMeshes)
 			rend.enabled = isOn;
 	}
 }

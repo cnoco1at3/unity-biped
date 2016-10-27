@@ -31,6 +31,7 @@ public class MatchmanSpawner : MonoBehaviour
 {
 	[SerializeField] GameObject matchman;
 	[SerializeField] GameObject marker;
+	[SerializeField] GameObject googleArrow;
 	[SerializeField] Camera tangoCam;
 	Vector3 o_rootRot;
 	Vector3 o_parentRot;
@@ -57,8 +58,13 @@ public class MatchmanSpawner : MonoBehaviour
 				// is visible on screen when the floor is found.
 //				Vector3 cameraBase = new Vector3(tangoCam.transform.position.x, hitInfo.point.y+4, tangoCam.transform.position.z);
 //				Vector3 target = cameraBase + Vector3.ClampMagnitude(hitInfo.point - cameraBase, tangoCam.farClipPlane * 0.9f);
+				googleArrow.SetActive(true);
+				googleArrow.transform.position = new Vector3(hitInfo.point.x, hitInfo.point.y, hitInfo.point.z);
+				Animation a = GetComponentInChildren<Animation>();
+				a.Stop();
+				a.Play("ARMarkerShow", PlayMode.StopAll);
 				matchman.SetActive(false);
-				matchman.transform.position = new Vector3(hitInfo.point.x, hitInfo.point.y+1.2f, hitInfo.point.z);
+				matchman.transform.position = new Vector3(hitInfo.point.x, hitInfo.point.y+0.2f, hitInfo.point.z);
 				matchman.transform.eulerAngles = o_parentRot;
 				matchman.GetComponent<ControlEngine>().root.transform.localPosition = new Vector3(0,0,0);
 				matchman.GetComponent<ControlEngine>().root.transform.localEulerAngles = o_rootRot;
@@ -74,7 +80,7 @@ public class MatchmanSpawner : MonoBehaviour
 
 		if (!spawning)
 		{
-			if (GUI.Button(new Rect(20, 20, 200, 80), "<size=30>Find Floor</size>"))
+			if (GUI.Button(new Rect(20, 20, 500, 300), "<size=50>Place Character</size>"))
 			{
 				spawning = true;
 			}

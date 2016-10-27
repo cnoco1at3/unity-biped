@@ -17,7 +17,6 @@ public class JointEditor : MonoBehaviour {
 		//set initial button position
 		if (joint != null)
 			transform.position = displayCam.WorldToScreenPoint(joint.position);
-		
 	}
 
 	void DrawLine()
