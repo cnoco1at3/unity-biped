@@ -87,6 +87,7 @@ public class RigManager : MonoBehaviour {
 
 	public void StartRigMode (GameObject character)
 	{
+		SetRigVisibility(curCharacter);
 		if (!isRigging) {
 			isRigging = true;
 			SetCamera (rigCam1);
@@ -152,5 +153,10 @@ public class RigManager : MonoBehaviour {
 		foreach (Rigidbody rb in curCharacter.GetComponentsInChildren<Rigidbody>()) {
 			rb.isKinematic = !isOn;
 		}
+	}
+
+	public void SetRigVisibility(bool isOn) {
+		foreach (MeshRenderer rend in curCharacter.GetComponentsInChildren<MeshRenderer>())
+			rend.enabled = isOn;
 	}
 }

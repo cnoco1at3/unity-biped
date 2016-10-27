@@ -94,7 +94,7 @@ public class TangoPointCloudFloor : MonoBehaviour
             if (m_turnOffDepthCamera && !m_depthTriggered)
             {
                 m_depthTriggered = true;
-                //m_tangoApplication.SetDepthCameraRate(TangoEnums.TangoDepthCameraRate.DISABLED);
+                m_tangoApplication.SetDepthCameraRate(TangoEnums.TangoDepthCameraRate.DISABLED);
             }
         }
         else

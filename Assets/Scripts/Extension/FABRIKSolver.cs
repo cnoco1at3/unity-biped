@@ -12,7 +12,7 @@
 public static class FABRIKSolver {
 
     // error tolerance
-    private const float kMaxError = 0.01f;
+    private const float kMaxError = 0.0001f;
     // maximum iteration times
     private const int kMaxIteration = 40;
 
