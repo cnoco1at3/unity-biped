@@ -16,12 +16,12 @@ public class Configuration {
     public Vector3 kDV; // desired velocity
     public float kDH = 0.65f; // desired height
     // PD control
-    public float kP = 400f, // P for PD controller
+    public float kP = 200f, // P for PD controller
         kD; // D for PD controller
     // velocity tuning
-    public float kV = 0.05f,
+    public float kV = 1f,
         kVAlpha = 0.05f,
-        kLiftH = 0.35f; // foot lift height
+        kLiftH = 0.33f; // foot lift height
 
     public List<Vector3> gizmos;
     public List<Color> gizcolor;
