@@ -18,10 +18,9 @@ public class LimbsController : CharaController {
 
         // Assign IK target for swing or stance foot
         if (mode == AnimMode.kSwing) {
-            _ik_target = _objs[0].transform.position + IPMError() + FootError(_objs.Length - 1);
+            _ik_target = _objs[0].transform.position + IPMError();// + FootError(_objs.Length - 1);
             _ik_target.y = _config.ground_offset + _config.kLiftH * PhaseManager.InterpolateHeight(Time.time, ctrl_id);
             if (_debug) {
-                // _config.gizmos.Add(_ik_target);
                 _config.gizmos.Add(_ik_target);
                 _config.gizcolor.Add(Color.blue);
                 _config.gizmos.Add(_objs[0].transform.position);
@@ -30,6 +29,10 @@ public class LimbsController : CharaController {
         } else {
             _ik_target = _objs[0].transform.position + FootError(_objs.Length - 1);
             _ik_target.y = _config.ground_offset;
+            if (_debug) {
+                _config.gizmos.Add(_ik_target);
+                _config.gizcolor.Add(Color.blue);
+            }
         }
 
         // 1st pass IK solving
@@ -43,16 +46,18 @@ public class LimbsController : CharaController {
         //else
             _ik_target = _objs[0].transform.position;
 
-        _ik_target.y = _config.ground_offset + _config.kDH;
         _ik_target += _config.kDV * _config.kV * Time.fixedDeltaTime;
+        _ik_target.y = _config.ground_offset + _config.kDH;
         FABRIKSolver.SolveIKWithVectorConstraint(ref _target_pos, _ik_target, _chara.root.transform.forward, true);
 
+        /*
         if (_debug) {
             foreach (Vector3 target in _target_pos) {
                 _config.gizmos.Add(target);
                 _config.gizcolor.Add(Color.yellow);
             }
         }
+        */
     }
 
     public override void GenerateJointRotation() {
@@ -103,8 +108,10 @@ public class LimbsController : CharaController {
     }
 
     private Vector3 IPMError() {
-        Vector3 d = _chara.root.velocity + _config.kDV * Time.fixedDeltaTime;
-        Vector3 com = _chara.GetCenterOfMass();
+        Vector3 d = _chara.root.velocity;
+        //Vector3 com = _chara.GetCenterOfMass();
+        Vector3 com = _chara.root.transform.position;
+        com.y -= _config.ground_offset;
 
         float g = Mathf.Abs(Physics.gravity.y);
 
