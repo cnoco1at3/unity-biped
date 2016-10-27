@@ -90,6 +90,85 @@ NavMeshSettings:
     cellSize: 0.16666667
     manualCellSize: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &248240821
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 248240825}
+  - 33: {fileID: 248240824}
+  - 65: {fileID: 248240823}
+  - 23: {fileID: 248240822}
+  m_Layer: 0
+  m_Name: Cube
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!23 &248240822
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 248240821}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_Materials:
+  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 1
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_SelectedWireframeHidden: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+--- !u!65 &248240823
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 248240821}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!33 &248240824
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 248240821}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &248240825
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 248240821}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.000000055879354, y: -0.33, z: 0.204}
+  m_LocalScale: {x: 0.1, y: 0.7, z: 0.1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
 --- !u!1 &396110981 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 155542, guid: a5a6c8a7c612aaa4493a96897b26e832, type: 2}
@@ -544,7 +623,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 464782, guid: a5a6c8a7c612aaa4493a96897b26e832, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 0.0784
+      value: 0.26
       objectReference: {fileID: 0}
     - target: {fileID: 464782, guid: a5a6c8a7c612aaa4493a96897b26e832, type: 2}
       propertyPath: m_LocalPosition.z
@@ -612,7 +691,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 11479078, guid: a5a6c8a7c612aaa4493a96897b26e832, type: 2}
       propertyPath: debug
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 153000010500669232, guid: a5a6c8a7c612aaa4493a96897b26e832,
         type: 2}
@@ -624,6 +703,22 @@ Prefab:
       propertyPath: m_AngularYZDrive.positionDamper
       value: 40
       objectReference: {fileID: 0}
+    - target: {fileID: 464782, guid: a5a6c8a7c612aaa4493a96897b26e832, type: 2}
+      propertyPath: m_LocalScale.x
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 464782, guid: a5a6c8a7c612aaa4493a96897b26e832, type: 2}
+      propertyPath: m_LocalScale.y
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 464782, guid: a5a6c8a7c612aaa4493a96897b26e832, type: 2}
+      propertyPath: m_LocalScale.z
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 11479078, guid: a5a6c8a7c612aaa4493a96897b26e832, type: 2}
+      propertyPath: aim
+      value: 
+      objectReference: {fileID: 1242263546}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: a5a6c8a7c612aaa4493a96897b26e832, type: 2}
   m_IsPrefabParent: 0

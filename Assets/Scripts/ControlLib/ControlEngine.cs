@@ -12,9 +12,10 @@ public class ControlEngine : MonoBehaviour {
     private Configuration _config;
     private CharaConfiguration _chara;
     private MotionGenerator _motion_generator;
+    private Vector3 _desired_position = Vector3.zero;
 
-    public void SetDesiredVelocity(Vector3 dV) {
-        _config.kDV = dV;
+    public void SetDesiredPosition(Vector3 dP) {
+        _desired_position = dP;
     }
 
     void Start() {
@@ -41,12 +42,8 @@ public class ControlEngine : MonoBehaviour {
         /* wasd control */
         //if (debug)
         //KeyboardInteraction();
-        const int layer_mask = ~(0xF << 8);
-        bool cast_flag = false;
-        Vector3 root_oplane_position = root.transform.position;
-        RaycastHit hit = new RaycastHit();
-        cast_flag = Physics.Raycast(root_oplane_position, -Vector3.up, out hit, 10.0f, layer_mask);
-        _config.ground_offset = hit.point.y;
+        AdjustGroundOffset();
+        DesiredPositionController();
     }
 
     void FixedUpdate() {
@@ -80,5 +77,21 @@ public class ControlEngine : MonoBehaviour {
                 Gizmos.DrawWireCube(_config.gizmos[i], _config.scale_factor * (new Vector3(0.1f, 0.1f, 0.1f)));
             }
         }
+    }
+
+    private void DesiredPositionController() {
+        Vector3 error = _chara.root.transform.position - _desired_position;
+        error.y = 0;
+        _config.kDV = error * 0.5f;
+    }
+
+    private void AdjustGroundOffset() {
+        const int layer_mask = ~(0xF << 8);
+        bool cast_flag = false;
+        Vector3 root_oplane_position = root.transform.position;
+        RaycastHit hit = new RaycastHit();
+        cast_flag = Physics.Raycast(root_oplane_position, -Vector3.up, out hit, 10.0f, layer_mask);
+        if(cast_flag)
+            _config.ground_offset = hit.point.y;
     }
 }
