@@ -41,13 +41,11 @@ public class ControlEngine : MonoBehaviour {
         /* wasd control */
         //if (debug)
         //KeyboardInteraction();
-        int layer_mask = 0xF << 8;
-        layer_mask = ~layer_mask;
+        const int layer_mask = ~(0xF << 8);
+        bool cast_flag = false;
         Vector3 root_oplane_position = root.transform.position;
-        root_oplane_position.y = 0;
-        Ray ray = new Ray(root_oplane_position, -Vector3.up);
         RaycastHit hit = new RaycastHit();
-        Physics.Raycast(ray, out hit, 10.0f, layer_mask);
+        cast_flag = Physics.Raycast(root_oplane_position, -Vector3.up, out hit, 10.0f, layer_mask);
         _config.ground_offset = hit.point.y;
     }
 
@@ -75,7 +73,7 @@ public class ControlEngine : MonoBehaviour {
         }
     }
 
-    void OnDrawGizmos () {
+    void OnDrawGizmos() {
         if (debug) {
             for (int i = 0; i < _config.gizcolor.Count; ++i) {
                 Gizmos.color = _config.gizcolor[i];
