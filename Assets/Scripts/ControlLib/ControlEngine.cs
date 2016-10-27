@@ -8,14 +8,20 @@ public class ControlEngine : MonoBehaviour {
     public GameObject[] arm_l, arm_r;
     public GameObject[] body;
     public bool debug;
+    public bool run;
 
     private Configuration _config;
     private CharaConfiguration _chara;
     private MotionGenerator _motion_generator;
     private Vector3 _desired_position = Vector3.zero;
+    private float _desired_speed_factor = 0.5f;
 
     public void SetDesiredPosition(Vector3 dP) {
         _desired_position = dP;
+    }
+    
+    public void SetSpeedFactor(float sF) {
+        _desired_speed_factor = sF;
     }
 
     void Start() {
@@ -42,17 +48,21 @@ public class ControlEngine : MonoBehaviour {
         /* wasd control */
         //if (debug)
         //KeyboardInteraction();
-        AdjustGroundOffset();
-        DesiredPositionController();
+        if (run) {
+            AdjustGroundOffset();
+            DesiredPositionController();
+        }
     }
 
     void FixedUpdate() {
-        if (debug) {
-            _config.gizmos.Clear();
-            _config.gizcolor.Clear();
+        if (run) {
+            if (debug) {
+                _config.gizmos.Clear();
+                _config.gizcolor.Clear();
+            }
+            _motion_generator.GenerateTargetPose();
+            _motion_generator.ApplyTargetPose();
         }
-        _motion_generator.GenerateTargetPose();
-        _motion_generator.ApplyTargetPose();
 
     }
 
@@ -82,7 +92,7 @@ public class ControlEngine : MonoBehaviour {
     private void DesiredPositionController() {
         Vector3 error = _chara.root.transform.position - _desired_position;
         error.y = 0;
-        _config.kDV = error * 0.5f;
+        _config.kDV = error * _desired_speed_factor;
     }
 
     private void AdjustGroundOffset() {

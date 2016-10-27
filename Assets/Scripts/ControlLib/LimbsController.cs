@@ -46,7 +46,7 @@ public class LimbsController : CharaController {
         // 1st pass IK solving
         for (int i = 0; i < _objs.Length; ++i)
             _target_pos[i] = _objs[i].transform.position;
-        FABRIKSolver.SolveIKWithVectorConstraint(ref _target_pos, _ik_target, Vector3.forward);
+        FABRIKSolver.SolveIKWithVectorConstraint(ref _target_pos, _ik_target, _chara.root.transform.forward);
 
         // 2nd pass IK solving
         //if (GetCurrentMode() == AnimMode.kSwing)
