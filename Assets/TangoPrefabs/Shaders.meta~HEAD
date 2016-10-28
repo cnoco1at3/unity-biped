@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+<<<<<<< HEAD:Assets/TangoPrefabs/Shaders.meta
+guid: 50dcc8668f7cd42289fc1e99e6a3cc2a
+folderAsset: yes
+timeCreated: 1436462219
+licenseType: Pro
+=======
+guid: 35840fa7be5024e4792061b85fa6bc4e
+folderAsset: yes
+timeCreated: 1477672399
+licenseType: Free
+>>>>>>> master:Assets/OVR/Shaders.meta
+DefaultImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+<<<<<<< HEAD:Assets/TangoSDK/Examples/DetectTangoCore/Scripts.meta
+guid: 5a8270124e7c64253a26102bc2c75816
+folderAsset: yes
+timeCreated: 1450388549
+=======
+guid: b062770845b5f04438886c51fed242e3
+folderAsset: yes
+timeCreated: 1477672399
+>>>>>>> master:Assets/SteamVR/Scripts.meta
+licenseType: Free
+DefaultImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
