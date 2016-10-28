@@ -4,7 +4,10 @@ using System.Collections;
 public class Destination : MonoBehaviour {
 	[SerializeField] Camera tangoCam;
 	[SerializeField] ControlEngine controller;
+	[SerializeField] GameObject placeCharacterButton;
+	[SerializeField] Tutorial tutorial;
 	public bool newlyDesignated {get;private set;}
+	bool raceStarted;
 	Animation anim;
 	RaycastHit hitInfo;
 
@@ -14,9 +17,22 @@ public class Destination : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-		for (var i = 0; i < Input.touchCount; ++i)
+		if (GameManager.characterPlaced)
 		{
-			if (Input.GetTouch(i).phase == TouchPhase.Began && Physics.Raycast(tangoCam.ScreenPointToRay(Input.GetTouch(i).position), out hitInfo))
+			for (var i = 0; i < Input.touchCount; ++i)
+			{
+				if (Input.GetTouch(i).phase == TouchPhase.Began && Physics.Raycast(tangoCam.ScreenPointToRay(Input.GetTouch(i).position), out hitInfo))
+				{
+					transform.GetChild(0).gameObject.SetActive(true);
+					anim = GetComponentInChildren<Animation>();
+					anim.Stop();
+					anim.Play("ARMarkerShow", PlayMode.StopAll);
+					transform.position = hitInfo.point;
+					newlyDesignated = true;
+
+				}
+			}
+			if(Input.GetMouseButtonDown(0) && Physics.Raycast(tangoCam.ScreenPointToRay(Input.mousePosition), out hitInfo))
 			{
 				transform.GetChild(0).gameObject.SetActive(true);
 				anim = GetComponentInChildren<Animation>();
@@ -24,21 +40,22 @@ public class Destination : MonoBehaviour {
 				anim.Play("ARMarkerShow", PlayMode.StopAll);
 				transform.position = hitInfo.point;
 				newlyDesignated = true;
-
+			}
+			if (newlyDesignated)
+			{
+				GameManager.characterPlaced = false;
+				controller.SetDesiredPosition(transform.position);
+				newlyDesignated = false;
+				controller.run = true;
+				placeCharacterButton.SetActive(true);	
+				tutorial.UpdateText(3);
 			}
 		}
-		if(Input.GetMouseButtonDown(0) && Physics.Raycast(tangoCam.ScreenPointToRay(Input.mousePosition), out hitInfo))
-		{
-			transform.GetChild(0).gameObject.SetActive(true);
-			anim = GetComponentInChildren<Animation>();
-			anim.Stop();
-			anim.Play("ARMarkerShow", PlayMode.StopAll);
-			transform.position = hitInfo.point;
-			newlyDesignated = true;
-		}
-		if (newlyDesignated)
-		{
-			controller.SetDesiredPosition(transform.position);
-		}
+	}
+
+	IEnumerator StartRace()
+	{
+		yield return new WaitForSeconds(1);
+		GameManager.raceStarted = true;
 	}
 }

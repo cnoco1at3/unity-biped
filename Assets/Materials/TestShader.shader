@@ -15,7 +15,7 @@
 		Lighting Off
         SubShader
         {
-        	Tags {"Queue" = "Geometry+1"}
+        	Tags {"Queue" = "Geometry"}
             Pass
             {
                 SetTexture [_MainTex]

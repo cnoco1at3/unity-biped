@@ -21,6 +21,7 @@ using System.Collections;
 using System.IO;
 using Tango;
 using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
 /// Tango floor finding user interface controller. 
@@ -82,10 +83,7 @@ public class MatchmanSpawner : MonoBehaviour
 
 		if (!spawning)
 		{
-			if (GUI.Button(new Rect(20, Screen.height - 280, 500, 230), "<size=50>Place Character</size>"))
-			{
-				spawning = true;
-			}
+			return;
 		}
 		else
 		{
@@ -93,4 +91,11 @@ public class MatchmanSpawner : MonoBehaviour
 		}
 	}
 
+	public void PlaceCharacter(GameObject source)
+	{
+		spawning = true;
+		matchman.GetComponent<ControlEngine>().run = false;
+		GameManager.characterPlaced = true;
+		source.SetActive(false);
+	}
 }
