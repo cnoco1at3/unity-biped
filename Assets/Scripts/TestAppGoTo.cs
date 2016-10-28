@@ -12,7 +12,7 @@ public class TestAppGoTo : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        _control_engine.SetDesiredPosition(transform.position);
+        _control_engine.SetDesiredDirection(transform.position);
     }
 
 }

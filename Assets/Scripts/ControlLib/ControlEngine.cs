@@ -13,17 +13,17 @@ public class ControlEngine : MonoBehaviour {
     private Configuration _config;
     private CharaConfiguration _chara;
     private MotionGenerator _motion_generator;
-    private Vector3 _desired_position = Vector3.zero;
+    private Vector3 _desired_direction = Vector3.zero;
     private float _desired_speed_factor = 0.5f;
     private bool _flick = false;
     private float _flick_time = 0.0f;
 
-    public void SetDesiredPosition(Vector3 dP) {
-        _desired_position = dP;
+    public void SetDesiredDirection(Vector3 dd) {
+        _desired_direction = dd;
     }
 
-    public void SetSpeedFactor(float sF) {
-        _desired_speed_factor = sF;
+    public void SetSpeedFactor(float sf) {
+        _desired_speed_factor = sf;
     }
 
     void Start() {
@@ -54,6 +54,11 @@ public class ControlEngine : MonoBehaviour {
             AdjustGroundOffset();
             DesiredPositionController();
         }
+
+        if (Input.GetKey(KeyCode.Space)) {
+            _flick = true;
+            _flick_time = Time.time;
+        }
     }
 
     void FixedUpdate() {
@@ -66,7 +71,7 @@ public class ControlEngine : MonoBehaviour {
             _motion_generator.ApplyTargetPose();
 
             if (_flick) {
-                Vector3 force_dir = _desired_position - _chara.root.transform.position;
+                Vector3 force_dir = _desired_direction;
                 force_dir.y = 0f;
                 force_dir.Normalize();
                 _chara.root.AddForce(force_dir * 1e2f * (0.5f + Time.time - _flick_time));
@@ -90,10 +95,6 @@ public class ControlEngine : MonoBehaviour {
             _config.kDV = Vector3.zero;
         }
 
-        if (Input.GetKey(KeyCode.Space)) {
-            _flick = true;
-            _flick_time = Time.time;
-        }
     }
 
     void OnDrawGizmos() {
@@ -106,7 +107,7 @@ public class ControlEngine : MonoBehaviour {
     }
 
     private void DesiredPositionController() {
-        Vector3 error = _chara.root.transform.position - _desired_position;
+        Vector3 error = _desired_direction;
         error.y = 0;
         _config.kDV = error * _desired_speed_factor;
     }
