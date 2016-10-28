@@ -31,13 +31,20 @@ public class GameManager : MonoBehaviour {
 			if (raceOver)
 			{
 				controller.run = false;
-				int gongSound = Random.Range(2, sounds.Length);
+				int gongSound = Random.Range(3, sounds.Length);
 				PlaySound(gongSound);
+				StartCoroutine(Applause());
 				raceStarted = false;
 				characterPlaced = false;
 				tutorial.GetComponent<Text>().text += " A WORLD RECORD!!!1! (probably)";
 			}
 		}	
+	}
+
+	IEnumerator Applause()
+	{
+		yield return new WaitForSeconds(0.5f);
+		PlaySound(2);
 	}
 
 	public void SetGridVisibility(bool isOn)
