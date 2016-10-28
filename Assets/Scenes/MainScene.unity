@@ -90,6 +90,10 @@ NavMeshSettings:
     cellSize: 0.16666667
     manualCellSize: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &396110981 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 155542, guid: a5a6c8a7c612aaa4493a96897b26e832, type: 2}
+  m_PrefabInternal: {fileID: 1960847936}
 --- !u!1 &455358429
 GameObject:
   m_ObjectHideFlags: 0
