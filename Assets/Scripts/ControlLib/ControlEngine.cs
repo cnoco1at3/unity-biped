@@ -20,6 +20,14 @@ public class ControlEngine : MonoBehaviour {
 
     public void SetDesiredPosition(Vector3 dd) {
         _desired_direction = dd;
+        if (!run) {
+            Vector3 error = dd - _chara.root.transform.position;
+            error.y = 0;
+            Vector3 look = Quaternion.LookRotation(error, Vector3.up).eulerAngles;
+            Vector3 origin = _chara.root.transform.rotation.eulerAngles;
+            origin.y = look.y;
+            _chara.root.transform.rotation = Quaternion.Euler(origin);
+        }
     }
 
     public void SetSpeedFactor(float sf) {
