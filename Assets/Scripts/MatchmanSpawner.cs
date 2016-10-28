@@ -67,6 +67,9 @@ public class MatchmanSpawner : MonoBehaviour
 				matchman.transform.eulerAngles = o_parentRot;
 				matchman.GetComponent<ControlEngine>().root.transform.localPosition = new Vector3(0,0,0);
 				matchman.GetComponent<ControlEngine>().root.transform.localEulerAngles = o_rootRot;
+				print(matchman.GetComponent<ControlEngine>());
+				print(matchman.transform.position);
+				matchman.GetComponent<ControlEngine>().SetDesiredPosition(matchman.transform.position);
 				matchman.SetActive(true);
 				spawning = false;
 			}

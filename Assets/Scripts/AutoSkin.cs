@@ -2,44 +2,29 @@
 using System.Collections;
 
 public class AutoSkin : MonoBehaviour {
-	[SerializeField] Transform root;
+	[SerializeField] Transform newRoot;
 
 	void Start() {
 		BindMesh ();
 	}
 
 	void BindMesh() {
-		SkinnedMeshRenderer rend = GetComponentInChildren<SkinnedMeshRenderer> ();
-
-		Mesh mesh = (Mesh)Instantiate (GetComponentInChildren<SkinnedMeshRenderer> ().sharedMesh);
-		mesh.RecalculateNormals();
-
-		Transform[] bones = root.GetComponentsInChildren<Transform>();
-		Matrix4x4[] bindPoses = new Matrix4x4[bones.Length];
-
-		for (int i = 0; i < bones.Length; i++) {
-			bindPoses [i] = bones [i].worldToLocalMatrix * transform.localToWorldMatrix;
-		}
-
-		mesh.bindposes = bindPoses;
-
-		BoneWeight[] boneWeights = new BoneWeight[mesh.vertexCount];
-		for (int i = 0; i < mesh.vertices.Length; i++) {
-			int closestIndex = 0;
-			for (int j = 0; j < bones.Length; j++) {
-				Vector3 vert = transform.TransformPoint(mesh.vertices [i]);
-				if (Vector3.Distance (vert, bones [j].position) <
-					Vector3.Distance (vert, bones [closestIndex].position))
-					closestIndex = j;
+		Transform[] o_bones = GetComponentInChildren<SkinnedMeshRenderer>().bones;
+		Transform[] bones = newRoot.GetComponentsInChildren<Transform>();
+		Transform[] newBones = new Transform[o_bones.Length];
+		for (int i = 0; i < o_bones.Length; i++)
+		{
+			Transform bone = o_bones[i];
+			foreach(Transform newBone in bones)
+			{
+				if(bone.name == newBone.name)
+				{
+					newBone.position = bone.position;
+					newBones[i] = newBone;
+				}
 			}
-			boneWeights [i].boneIndex0 = closestIndex;
-			boneWeights [i].weight0 = 1;
 		}
-		mesh.boneWeights = boneWeights;
-
-		// Assign bones and bind poses
-		rend.bones = bones;
-		rend.sharedMesh = mesh;
+		GetComponentInChildren<SkinnedMeshRenderer>().bones = newBones;
 	}
 
 }

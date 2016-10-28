@@ -1,17 +1,28 @@
 fileFormatVersion: 2
-guid: 6c37332067a88ac48b0f592bdc5285af
-timeCreated: 1475088281
+guid: 58ac45b5770314e7dbda90ccb52c68ab
+timeCreated: 1477660437
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
-    100000: //RootNode
-    100002: monkey1
-    400000: //RootNode
-    400002: monkey1
-    2300000: monkey1
-    3300000: monkey1
-    4300000: monkey1
+    100000: pasted__Mesh
+    100002: pasted__Mesh2
+    100004: pasted__polySurface2
+    100006: pasted__transform3
+    100008: pasted__transform4
+    100010: pasted__Users_ali_Downloads_Low_Poly_Donald_Trump_files_Trump_lowPoly_print_stl
+    100012: //RootNode
+    400000: pasted__Mesh
+    400002: pasted__Mesh2
+    400004: pasted__polySurface2
+    400006: pasted__transform3
+    400008: pasted__transform4
+    400010: pasted__Users_ali_Downloads_Low_Poly_Donald_Trump_files_Trump_lowPoly_print_stl
+    400012: //RootNode
+    2300000: pasted__Mesh2
+    3300000: pasted__Mesh2
+    4300000: pasted__Mesh2
+    9500000: //RootNode
   materials:
     importMaterials: 1
     materialName: 0
@@ -70,7 +81,7 @@ ModelImporter:
     rootMotionBoneName: 
     hasTranslationDoF: 0
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 0
+  animationType: 2
   humanoidOversampling: 1
   additionalBone: 0
   userData: 

@@ -3,7 +3,8 @@ using System.Collections;
 
 public class Destination : MonoBehaviour {
 	[SerializeField] Camera tangoCam;
-	public bool isDesignated {get;private set;}
+	[SerializeField] ControlEngine controller;
+	public bool newlyDesignated {get;private set;}
 	Animation anim;
 	RaycastHit hitInfo;
 
@@ -22,7 +23,7 @@ public class Destination : MonoBehaviour {
 				anim.Stop();
 				anim.Play("ARMarkerShow", PlayMode.StopAll);
 				transform.position = hitInfo.point;
-				isDesignated = true;
+				newlyDesignated = true;
 
 			}
 		}
@@ -33,7 +34,11 @@ public class Destination : MonoBehaviour {
 			anim.Stop();
 			anim.Play("ARMarkerShow", PlayMode.StopAll);
 			transform.position = hitInfo.point;
-			isDesignated = true;
+			newlyDesignated = true;
+		}
+		if (newlyDesignated)
+		{
+			controller.SetDesiredPosition(transform.position);
 		}
 	}
 }
