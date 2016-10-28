@@ -40,7 +40,7 @@ public class ControlEngine : MonoBehaviour {
         _chara = new CharaConfiguration(_config, root.GetComponent<Rigidbody>(), body_list, limbs_list, debug);
         _motion_generator = new MotionGenerator(_chara, _config, debug);
 
-        _desired_direction = new Vector3(0, 0, 10);
+        _desired_direction = Vector3.zero;
 
         /*
         if (debug)
