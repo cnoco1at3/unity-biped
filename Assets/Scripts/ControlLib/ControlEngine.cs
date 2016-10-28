@@ -55,7 +55,7 @@ public class ControlEngine : MonoBehaviour {
             DesiredPositionController();
         }
 
-        if (Input.GetKey(KeyCode.Space)) {
+        if (Input.GetKey(KeyCode.Mouse0)) {
             _flick = true;
             _flick_time = Time.time;
         }
@@ -121,5 +121,4 @@ public class ControlEngine : MonoBehaviour {
         if (cast_flag)
             _config.ground_offset = hit.point.y;
     }
-
 }
