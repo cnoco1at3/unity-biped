@@ -15,11 +15,13 @@ public class ControlEngine : MonoBehaviour {
     private MotionGenerator _motion_generator;
     private Vector3 _desired_position = Vector3.zero;
     private float _desired_speed_factor = 0.5f;
+    private bool _flick = false;
+    private float _flick_time = 0.0f;
 
     public void SetDesiredPosition(Vector3 dP) {
         _desired_position = dP;
     }
-    
+
     public void SetSpeedFactor(float sF) {
         _desired_speed_factor = sF;
     }
@@ -46,8 +48,8 @@ public class ControlEngine : MonoBehaviour {
 
     void Update() {
         /* wasd control */
-        //if (debug)
-        //KeyboardInteraction();
+        if (debug)
+            KeyboardInteraction();
         if (run) {
             AdjustGroundOffset();
             DesiredPositionController();
@@ -62,6 +64,15 @@ public class ControlEngine : MonoBehaviour {
             }
             _motion_generator.GenerateTargetPose();
             _motion_generator.ApplyTargetPose();
+
+            if (_flick) {
+                Vector3 force_dir = _desired_position - _chara.root.transform.position;
+                force_dir.y = 0f;
+                force_dir.Normalize();
+                _chara.root.AddForce(force_dir * 1e2f * (0.5f + Time.time - _flick_time));
+                if (_flick_time - Time.time > 0.5f)
+                    _flick = false;
+            }
         }
 
     }
@@ -77,6 +88,11 @@ public class ControlEngine : MonoBehaviour {
             _config.kDV = new Vector3(0.7f, 0.0f, 0.0f);
         } else {
             _config.kDV = Vector3.zero;
+        }
+
+        if (Input.GetKey(KeyCode.Space)) {
+            _flick = true;
+            _flick_time = Time.time;
         }
     }
 
@@ -101,7 +117,8 @@ public class ControlEngine : MonoBehaviour {
         Vector3 root_oplane_position = root.transform.position;
         RaycastHit hit = new RaycastHit();
         cast_flag = Physics.Raycast(root_oplane_position, -Vector3.up, out hit, 10.0f, layer_mask);
-        if(cast_flag)
+        if (cast_flag)
             _config.ground_offset = hit.point.y;
     }
+
 }
