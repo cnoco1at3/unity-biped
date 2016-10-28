@@ -34,6 +34,7 @@ public class MatchmanSpawner : MonoBehaviour
 	[SerializeField] GameObject marker;
 	[SerializeField] GameObject googleArrow;
 	[SerializeField] Camera tangoCam;
+	[SerializeField] GameObject placeCharacterButton;
 	Vector3 o_rootRot;
 	Vector3 o_parentRot;
 	RaycastHit hitInfo;
@@ -59,7 +60,6 @@ public class MatchmanSpawner : MonoBehaviour
 				// is visible on screen when the floor is found.
 //				Vector3 cameraBase = new Vector3(tangoCam.transform.position.x, hitInfo.point.y+4, tangoCam.transform.position.z);
 //				Vector3 target = cameraBase + Vector3.ClampMagnitude(hitInfo.point - cameraBase, tangoCam.farClipPlane * 0.9f);
-				GameManager.characterPlaced = true;
 				googleArrow.SetActive(true);
 				googleArrow.transform.position = new Vector3(hitInfo.point.x, hitInfo.point.y, hitInfo.point.z);
 				Animation a = GetComponentInChildren<Animation>();
@@ -69,19 +69,19 @@ public class MatchmanSpawner : MonoBehaviour
 				matchman.transform.eulerAngles = o_parentRot;
 				matchman.GetComponent<ControlEngine>().root.transform.localPosition = new Vector3(0,0,0);
 				matchman.GetComponent<ControlEngine>().root.transform.localEulerAngles = o_rootRot;
-				print(matchman.GetComponent<ControlEngine>());
-				print(matchman.transform.position);
 				matchman.GetComponent<ControlEngine>().SetDesiredPosition(matchman.transform.position);
 				matchman.SetActive(true);
+				placeCharacterButton.SetActive(true);	
 				spawning = false;
 			}
 		}
 	}
 
-	public void PlaceCharacter(GameObject source)
+	public void PlaceCharacter()
 	{
+		GameManager.singleton.PlaceCharacter();
+		placeCharacterButton.SetActive(false);	
 		spawning = true;
 		matchman.GetComponent<ControlEngine>().run = false;
-		source.SetActive(false);
 	}
 }

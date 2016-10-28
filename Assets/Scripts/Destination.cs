@@ -4,10 +4,8 @@ using System.Collections;
 public class Destination : MonoBehaviour {
 	[SerializeField] Camera tangoCam;
 	[SerializeField] ControlEngine controller;
-	[SerializeField] GameObject placeCharacterButton;
 	[SerializeField] Tutorial tutorial;
 	public bool newlyDesignated {get;private set;}
-	bool raceStarted;
 	Animation anim;
 	RaycastHit hitInfo;
 
@@ -17,7 +15,7 @@ public class Destination : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-		if (GameManager.characterPlaced)
+		if (GameManager.characterPlaced && !GameManager.raceStarted)
 		{
 			for (var i = 0; i < Input.touchCount; ++i)
 			{
@@ -43,19 +41,9 @@ public class Destination : MonoBehaviour {
 			}
 			if (newlyDesignated)
 			{
-				GameManager.characterPlaced = false;
-				controller.SetDesiredPosition(transform.position);
+				GameManager.singleton.SetDestination(transform.position);
 				newlyDesignated = false;
-				controller.run = true;
-				GameManager.raceStarted = true;
-				placeCharacterButton.SetActive(true);	
-				tutorial.UpdateText(3);
 			}
 		}
-	}
-
-	IEnumerator StartRace()
-	{
-		yield return new WaitForSeconds(1);
 	}
 }
