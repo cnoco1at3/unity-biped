@@ -8,12 +8,13 @@ public class LimbsController : CharaController {
     private int ctrl_id;
     private Vector3[] velocity_filter;
     private Vector3 filtered_velocity = Vector3.zero;
-    private const int filter_size = 64;
+    private const int filter_size = 32;
     private int filter_cursor = 0;
 
     // Constructor
     public LimbsController(CharaConfiguration chara, Configuration config, GameObject[] objs, bool debug = false)
         : base(chara, config, objs, debug) {
+        ctrl_count = ctrl_count % 2;
         ctrl_id = ctrl_count++;
         velocity_filter = new Vector3[filter_size];
         for (int i = 0; i < filter_size; ++i)
@@ -45,7 +46,7 @@ public class LimbsController : CharaController {
         // 1st pass IK solving
         for (int i = 0; i < _objs.Length; ++i)
             _target_pos[i] = _objs[i].transform.position;
-        FABRIKSolver.SolveIKWithVectorConstraint(ref _target_pos, _ik_target, Vector3.forward);
+        FABRIKSolver.SolveIKWithVectorConstraint(ref _target_pos, _ik_target, _chara.root.transform.forward);
 
         // 2nd pass IK solving
         //if (GetCurrentMode() == AnimMode.kSwing)

@@ -82,6 +82,7 @@
     <Compile Include="Assets\Scripts\ControlLib\CharaController.cs" />
     <Compile Include="Assets\Scripts\ControlLib\Configuration.cs" />
     <Compile Include="Assets\Scripts\ControlLib\ControlEngine.cs" />
+    <Compile Include="Assets\Scripts\ControlLib\IControlInterruptable.cs" />
     <Compile Include="Assets\Scripts\ControlLib\LimbsController.cs" />
     <Compile Include="Assets\Scripts\ControlLib\MotionGenerator.cs" />
     <Compile Include="Assets\Scripts\ControlLib\PhaseManager.cs" />
