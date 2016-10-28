@@ -14,7 +14,7 @@ public class ControlEngine : MonoBehaviour {
     private CharaConfiguration _chara;
     private MotionGenerator _motion_generator;
     private Vector3 _desired_direction;
-    private float _desired_speed_factor = 2f;
+    private float _desired_speed_factor = 3f;
     private bool _flick = false;
     private float _flick_time = 0.0f;
 
@@ -109,7 +109,7 @@ public class ControlEngine : MonoBehaviour {
     }
 
     private void DesiredPositionController() {
-        Vector3 error = _chara.root.transform.position - _desired_direction.normalized;
+        Vector3 error = _chara.root.transform.position - _desired_direction;
         error.y = 0;
         _config.kDV = error * _desired_speed_factor;
     }
