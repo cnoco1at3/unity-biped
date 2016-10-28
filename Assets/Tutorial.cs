@@ -8,27 +8,30 @@ public class Tutorial : MonoBehaviour {
 	public void UpdateText (int textID)
 	{
 		curText = textID;
-		switch(textID)
+		timer = 0;
+	}
+
+	void Update ()
+	{
+		switch(curText)
 		{
 		case 1:
 			GetComponent<Text>().text = "Set character's starting position.";
 			break;
 		case 2:
-			GetComponent<Text>().text = "Set character's destination to start!";
+			if (GameManager.characterPlaced)
+				GetComponent<Text>().text = "Set character's destination to start!";
+			else
+				GetComponent<Text>().text = "Looking for floor...";
 			break;
 		case 3:
-			timer = 0;
-			break;
-		}
-	}
-
-	void Update ()
-	{
-		if (curText == 3)
-		{
 			if (GameManager.raceStarted)
 				timer += Time.deltaTime;
-			GetComponent<Text>().text = "" + timer; 
+			string curTime = "" + Mathf.Round(timer * 100) / 100;
+			GetComponent<Text>().text = curTime;
+			break;
+		default:
+			break;
 		}
 	}
 }

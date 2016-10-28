@@ -59,6 +59,7 @@ public class MatchmanSpawner : MonoBehaviour
 				// is visible on screen when the floor is found.
 //				Vector3 cameraBase = new Vector3(tangoCam.transform.position.x, hitInfo.point.y+4, tangoCam.transform.position.z);
 //				Vector3 target = cameraBase + Vector3.ClampMagnitude(hitInfo.point - cameraBase, tangoCam.farClipPlane * 0.9f);
+				GameManager.characterPlaced = true;
 				googleArrow.SetActive(true);
 				googleArrow.transform.position = new Vector3(hitInfo.point.x, hitInfo.point.y, hitInfo.point.z);
 				Animation a = GetComponentInChildren<Animation>();
@@ -77,25 +78,10 @@ public class MatchmanSpawner : MonoBehaviour
 		}
 	}
 
-	public void OnGUI()
-	{
-		GUI.color = Color.white;
-
-		if (!spawning)
-		{
-			return;
-		}
-		else
-		{
-			GUI.Label(new Rect(20, Screen.height - 80, Screen.width, 80), "<size=50>Looking for floor...</size>");
-		}
-	}
-
 	public void PlaceCharacter(GameObject source)
 	{
 		spawning = true;
 		matchman.GetComponent<ControlEngine>().run = false;
-		GameManager.characterPlaced = true;
 		source.SetActive(false);
 	}
 }

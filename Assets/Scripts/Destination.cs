@@ -47,6 +47,7 @@ public class Destination : MonoBehaviour {
 				controller.SetDesiredPosition(transform.position);
 				newlyDesignated = false;
 				controller.run = true;
+				GameManager.raceStarted = true;
 				placeCharacterButton.SetActive(true);	
 				tutorial.UpdateText(3);
 			}
@@ -56,6 +57,5 @@ public class Destination : MonoBehaviour {
 	IEnumerator StartRace()
 	{
 		yield return new WaitForSeconds(1);
-		GameManager.raceStarted = true;
 	}
 }
