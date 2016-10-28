@@ -14,11 +14,11 @@ public class ControlEngine : MonoBehaviour {
     private CharaConfiguration _chara;
     private MotionGenerator _motion_generator;
     private Vector3 _desired_direction;
-    private float _desired_speed_factor = 0.5f;
+    private float _desired_speed_factor = 2f;
     private bool _flick = false;
     private float _flick_time = 0.0f;
 
-    public void SetDesiredDirection(Vector3 dd) {
+    public void SetDesiredPosition(Vector3 dd) {
         _desired_direction = dd;
     }
 
@@ -109,9 +109,9 @@ public class ControlEngine : MonoBehaviour {
     }
 
     private void DesiredPositionController() {
-        Vector3 error = -_desired_direction.normalized;
+        Vector3 error = _chara.root.transform.position - _desired_direction.normalized;
         error.y = 0;
-        _config.kDV = 5 * error * _desired_speed_factor;
+        _config.kDV = error * _desired_speed_factor;
     }
 
     private void AdjustGroundOffset() {
