@@ -13,7 +13,7 @@ public class ControlEngine : MonoBehaviour {
     private Configuration _config;
     private CharaConfiguration _chara;
     private MotionGenerator _motion_generator;
-    private Vector3 _desired_direction = Vector3.zero;
+    private Vector3 _desired_direction;
     private float _desired_speed_factor = 0.5f;
     private bool _flick = false;
     private float _flick_time = 0.0f;
@@ -39,6 +39,8 @@ public class ControlEngine : MonoBehaviour {
         limbs_list.Add(leg_r);
         _chara = new CharaConfiguration(_config, root.GetComponent<Rigidbody>(), body_list, limbs_list, debug);
         _motion_generator = new MotionGenerator(_chara, _config, debug);
+
+        _desired_direction = new Vector3(0, 0, 10);
 
         /*
         if (debug)
@@ -107,9 +109,9 @@ public class ControlEngine : MonoBehaviour {
     }
 
     private void DesiredPositionController() {
-        Vector3 error = _desired_direction;
+        Vector3 error = -_desired_direction.normalized;
         error.y = 0;
-        _config.kDV = error * _desired_speed_factor;
+        _config.kDV = 5 * error * _desired_speed_factor;
     }
 
     private void AdjustGroundOffset() {
