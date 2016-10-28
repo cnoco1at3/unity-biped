@@ -109,9 +109,10 @@ public class ControlEngine : MonoBehaviour {
     }
 
     private void DesiredPositionController() {
-        Vector3 error = _chara.root.transform.position - _desired_direction.normalized;
+        Vector3 error = (_chara.root.transform.position - _desired_direction).normalized;
         error.y = 0;
         _config.kDV = error * _desired_speed_factor;
+        //_chara.root.velocity = _config.kDV;
     }
 
     private void AdjustGroundOffset() {
